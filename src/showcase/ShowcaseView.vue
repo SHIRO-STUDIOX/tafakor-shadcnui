@@ -7,6 +7,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
+import { Skeleton } from '@/components/ui/skeleton'
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
 import { 
   SparklesIcon, 
   Trash2Icon, 
@@ -50,6 +52,7 @@ const activeTab = ref<'components' | 'tokens'>('components')
 const inputVal = ref('')
 const checkboxVal = ref(false)
 const otpVal = ref('')
+const selectVal = ref('')
 const dateVal = ref<any>(today(getLocalTimeZone()))
 const isPending = ref(false)
 
@@ -92,11 +95,71 @@ const systemBorders = [
 ]
 
 const colorShades = [
-  { name: 'Primary (اصلی)', baseClass: 'primary', desc: 'رنگ عملیات‌ها و دکمه‌های اصلی' },
-  { name: 'Secondary (ثانویه)', baseClass: 'secondary', desc: 'رنگ‌های مکمل و فرعی با کنتراست پایین' },
-  { name: 'Accent (برجسته)', baseClass: 'accent', desc: 'تینت فوکوس، هاور و عناصر انتخابی' },
-  { name: 'Muted (خاموش)', baseClass: 'muted', desc: 'متون کم‌اهمیت و فیلدهای غیرفعال' },
-  { name: 'Destructive (مخرب)', baseClass: 'destructive', desc: 'پیام‌های خطا، حذف و وضعیت‌های منفی' },
+  {
+    name: 'Primary (اصلی)',
+    desc: 'رنگ عملیات‌ها و دکمه‌های اصلی',
+    swatches: [
+      { label: 'Solid', pct: '100%', class: 'bg-primary text-primary-foreground' },
+      { label: '/90', pct: '90%', class: 'bg-primary/90 text-primary-foreground/90' },
+      { label: '/80', pct: '80%', class: 'bg-primary/80 text-primary-foreground/80' },
+      { label: '/50', pct: '50%', class: 'bg-primary/50 text-primary-foreground/50' },
+      { label: '/30', pct: '30%', class: 'bg-primary/30 text-primary-foreground/30' },
+      { label: '/20', pct: '20%', class: 'bg-primary/20 text-primary-foreground/20' },
+      { label: '/10', pct: '10%', class: 'bg-primary/10 text-primary-foreground/10' },
+    ]
+  },
+  {
+    name: 'Secondary (ثانویه)',
+    desc: 'رنگ‌های مکمل و فرعی با کنتراست پایین',
+    swatches: [
+      { label: 'Solid', pct: '100%', class: 'bg-secondary text-secondary-foreground' },
+      { label: '/90', pct: '90%', class: 'bg-secondary/90 text-secondary-foreground/90' },
+      { label: '/80', pct: '80%', class: 'bg-secondary/80 text-secondary-foreground/80' },
+      { label: '/50', pct: '50%', class: 'bg-secondary/50 text-secondary-foreground/50' },
+      { label: '/30', pct: '30%', class: 'bg-secondary/30 text-secondary-foreground/30' },
+      { label: '/20', pct: '20%', class: 'bg-secondary/20 text-secondary-foreground/20' },
+      { label: '/10', pct: '10%', class: 'bg-secondary/10 text-secondary-foreground/10' },
+    ]
+  },
+  {
+    name: 'Accent (برجسته)',
+    desc: 'تینت فوکوس، هاور و عناصر انتخابی',
+    swatches: [
+      { label: 'Solid', pct: '100%', class: 'bg-accent text-accent-foreground' },
+      { label: '/90', pct: '90%', class: 'bg-accent/90 text-accent-foreground/90' },
+      { label: '/80', pct: '80%', class: 'bg-accent/80 text-accent-foreground/80' },
+      { label: '/50', pct: '50%', class: 'bg-accent/50 text-accent-foreground/50' },
+      { label: '/30', pct: '30%', class: 'bg-accent/30 text-accent-foreground/30' },
+      { label: '/20', pct: '20%', class: 'bg-accent/20 text-accent-foreground/20' },
+      { label: '/10', pct: '10%', class: 'bg-accent/10 text-accent-foreground/10' },
+    ]
+  },
+  {
+    name: 'Muted (خاموش)',
+    desc: 'متون کم‌اهمیت و فیلدهای غیرفعال',
+    swatches: [
+      { label: 'Solid', pct: '100%', class: 'bg-muted text-muted-foreground' },
+      { label: '/90', pct: '90%', class: 'bg-muted/90 text-muted-foreground/90' },
+      { label: '/80', pct: '80%', class: 'bg-muted/80 text-muted-foreground/80' },
+      { label: '/50', pct: '50%', class: 'bg-muted/50 text-muted-foreground/50' },
+      { label: '/30', pct: '30%', class: 'bg-muted/30 text-muted-foreground/30' },
+      { label: '/20', pct: '20%', class: 'bg-muted/20 text-muted-foreground/20' },
+      { label: '/10', pct: '10%', class: 'bg-muted/10 text-muted-foreground/10' },
+    ]
+  },
+  {
+    name: 'Destructive (مخرب)',
+    desc: 'پیام‌های خطا، حذف و وضعیت‌های منفی',
+    swatches: [
+      { label: 'Solid', pct: '100%', class: 'bg-destructive text-destructive-foreground' },
+      { label: '/90', pct: '90%', class: 'bg-destructive/90 text-destructive-foreground/90' },
+      { label: '/80', pct: '80%', class: 'bg-destructive/80 text-destructive-foreground/80' },
+      { label: '/50', pct: '50%', class: 'bg-destructive/50 text-destructive-foreground/50' },
+      { label: '/30', pct: '30%', class: 'bg-destructive/30 text-destructive-foreground/30' },
+      { label: '/20', pct: '20%', class: 'bg-destructive/20 text-destructive-foreground/20' },
+      { label: '/10', pct: '10%', class: 'bg-destructive/10 text-destructive-foreground/10' },
+    ]
+  },
 ]
 
 // Font Sizes Scale data
@@ -110,6 +173,32 @@ const fontSizes = [
   { name: 'text-3xl', size: '1.875rem', px: '30px', class: 'text-3xl' },
   { name: 'text-4xl', size: '2.25rem', px: '36px', class: 'text-4xl' },
   { name: 'text-5xl', size: '3rem', px: '48px', class: 'text-5xl' },
+]
+
+// Border Radius Scale data
+const borderRadii = [
+  { name: 'radius-sm', value: 'calc(var(--radius) * 0.6)', px: '4.8px', class: 'rounded-sm' },
+  { name: 'radius-md', value: 'calc(var(--radius) * 0.8)', px: '6.4px', class: 'rounded-md' },
+  { name: 'radius-lg', value: 'var(--radius)', px: '8px', class: 'rounded-lg' },
+  { name: 'radius-xl', value: 'calc(var(--radius) * 1.4)', px: '11.2px', class: 'rounded-xl' },
+  { name: 'radius-2xl', value: 'calc(var(--radius) * 1.8)', px: '14.4px', class: 'rounded-2xl' },
+  { name: 'radius-3xl', value: 'calc(var(--radius) * 2.2)', px: '17.6px', class: 'rounded-3xl' },
+  { name: 'radius-4xl', value: 'calc(var(--radius) * 2.6)', px: '20.8px', class: 'rounded-4xl' },
+]
+
+// Custom Typography Utilities data
+const customTypography = [
+  { class: 'text-lead', desc: 'متن لید (بزرگتر و خواناتر برای شروع مقالات)', example: 'این یک متن لید برای شروع یک مقاله یا بخش مهم در پلتفرم است.' },
+  { class: 'text-large', desc: 'متن برجسته و بزرگ برای عناوین فرعی و مهم داخل کارتها', example: 'عناوین داخل کارت‌ها یا موارد مهم آماری' },
+  { class: 'text-small', desc: 'متن بدنه کوچک با ضخامت متوسط برای برچسب‌ها و متون کمکی', example: 'برچسب فیلدها یا اعتبارسنجی فرم‌ها' },
+  { class: 'text-muted-custom', desc: 'متن کوچک خاموش برای توضیحات فرعی، پاورقی‌ها و زمان انتشار', example: 'بروزرسانی شده در ۵ دقیقه پیش' },
+]
+
+// Layout Utilities data
+const layoutUtilities = [
+  { class: 'form-group-layout', desc: 'چیدمان گرید فرم با فواصل gap-4 استاندارد شدسن', use: 'برای فرم‌های ثبت‌نام، تماس یا تنظیمات' },
+  { class: 'form-actions-layout', desc: 'چیدمان دکمه‌های کنترلی فرم (تایید و انصراف) با چیدمان فلکس و gap-3', use: 'در انتهای فرم‌ها یا پاپ‌آپ‌ها' },
+  { class: 'section-padding', desc: 'پدینگ داینامیک و واکنش‌گرا برای بخش‌های اصلی (p-4 تا lg:p-8)', use: 'کانتینر اصلی داشبورد یا صفحات فرود' },
 ]
 
 // 20 Popular Lucide Icons
@@ -154,7 +243,7 @@ const baseIcons = [
             <SparklesIcon class="size-4" />
             <span class="text-[10px] font-bold uppercase tracking-wider text-primary/80">محیط ۲ - نمایشگاه دیزاین سیستم</span>
           </div>
-          <h1 class="text-xl font-bold tracking-tight text-foreground">آلبوم ویژگی‌ها و متغیرها (Showcase)</h1>
+          <h1 class="text-xl font-extrabold tracking-tight text-foreground">آلبوم ویژگی‌ها و متغیرها (Showcase)</h1>
           <p class="text-muted-foreground text-xs mt-0.5">تست تم رنگی، تایپوگرافی فونت متغیر، فواصل و کامپوننت‌های پایه.</p>
         </div>
 
@@ -185,9 +274,9 @@ const baseIcons = [
       <div v-if="activeTab === 'components'" class="grid grid-cols-1 lg:grid-cols-2 gap-12 w-full">
         
         <!-- Buttons Panel -->
-        <div class="bg-card/30 border border-border/60 rounded-xl p-6 shadow-xs flex flex-col gap-6">
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6">
           <div class="flex flex-col gap-1">
-            <h2 class="text-sm font-bold text-foreground">دکمه‌ها (Button Variants)</h2>
+            <h2 class="text-sm font-extrabold text-foreground">دکمه‌ها (Button Variants)</h2>
             <p class="text-[11px] text-muted-foreground">تست انواع واریانت‌ها و ابعاد مختلف دکمه با انیمیشن‌های ترنزیشن پیش‌فرض.</p>
           </div>
 
@@ -241,9 +330,9 @@ const baseIcons = [
         </div>
 
         <!-- Inputs Panel -->
-        <div class="bg-card/30 border border-border/60 rounded-xl p-6 shadow-xs flex flex-col gap-6">
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6">
           <div class="flex flex-col gap-1">
-            <h2 class="text-sm font-bold text-foreground">فیلدهای ورودی (Inputs)</h2>
+            <h2 class="text-sm font-extrabold text-foreground">فیلدهای ورودی (Inputs)</h2>
             <p class="text-[11px] text-muted-foreground">نمونه ورودی‌های متنی، پسورد و وضعیت‌های ولیدیشن.</p>
           </div>
 
@@ -276,13 +365,25 @@ const baseIcons = [
                 </p>
               </div>
             </div>
+
+            <!-- NativeSelect component -->
+            <div class="flex flex-col gap-2">
+              <Label for="select-component">منوی انتخابی کامپوننت (NativeSelect Component)</Label>
+              <NativeSelect id="select-component" v-model="selectVal">
+                <NativeSelectOption value="" disabled>سمت شغلی را انتخاب کنید...</NativeSelectOption>
+                <NativeSelectOption value="admin">مدیر سیستم</NativeSelectOption>
+                <NativeSelectOption value="editor">نویسنده</NativeSelectOption>
+                <NativeSelectOption value="user">کاربر عادی</NativeSelectOption>
+              </NativeSelect>
+              <span class="text-[10px] text-muted-foreground mt-0.5 block">نقش انتخاب شده: <code class="bg-muted px-1 rounded">{{ selectVal || 'هیچکدام' }}</code></span>
+            </div>
           </div>
         </div>
 
         <!-- Checkbox & OTP Panel -->
-        <div class="bg-card/30 border border-border/60 rounded-xl p-6 shadow-xs flex flex-col gap-6">
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6">
           <div class="flex flex-col gap-1">
-            <h2 class="text-sm font-bold text-foreground">انتخاب‌ها و کدهای تایید (Selection & OTP)</h2>
+            <h2 class="text-sm font-extrabold text-foreground">انتخاب‌ها و کدهای تایید (Selection & OTP)</h2>
             <p class="text-[11px] text-muted-foreground">تعامل با چک‌باکس و فیلد دریافت کد OTP.</p>
           </div>
 
@@ -323,9 +424,9 @@ const baseIcons = [
         </div>
 
         <!-- Popover & Calendar Panel -->
-        <div class="bg-card/30 border border-border/60 rounded-xl p-6 shadow-xs flex flex-col gap-6">
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6">
           <div class="flex flex-col gap-1">
-            <h2 class="text-sm font-bold text-foreground">تقویم و پاپ‌اور (Calendar & Popover)</h2>
+            <h2 class="text-sm font-extrabold text-foreground">تقویم و پاپ‌اور (Calendar & Popover)</h2>
             <p class="text-[11px] text-muted-foreground">نمونه نمایش پاپ‌اور حاوی تقویم برای انتخاب تاریخ.</p>
           </div>
 
@@ -349,16 +450,169 @@ const baseIcons = [
           </div>
         </div>
 
+        <!-- Skeleton Loading Panel -->
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6 animate-in fade-in-50">
+          <div class="flex flex-col gap-1">
+            <h2 class="text-sm font-extrabold text-foreground">بارگذاری پیش‌فرض (Skeleton Component)</h2>
+            <p class="text-[11px] text-muted-foreground">بارگذاری پیش‌فرض اجزای مختلف کارت‌ها و متون برای شبیه‌سازی لود اطلاعات.</p>
+          </div>
+
+          <div class="flex flex-col gap-6 border-t border-border/40 pt-6">
+            <div class="flex items-center gap-4">
+              <Skeleton class="size-12 rounded-full shrink-0" />
+              <div class="flex flex-col gap-2 w-full">
+                <Skeleton class="h-4 w-[60%]" />
+                <Skeleton class="h-3 w-[40%]" />
+              </div>
+            </div>
+            
+            <div class="flex flex-col gap-2">
+              <Skeleton class="h-3 w-full" />
+              <Skeleton class="h-3 w-[90%]" />
+              <Skeleton class="h-3 w-[75%]" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Native HTML Elements Panel -->
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6 lg:col-span-2 animate-in fade-in-50">
+          <div class="flex flex-col gap-1">
+            <h2 class="text-sm font-extrabold text-foreground">المان‌های بومی وب (Native HTML Elements via spacing-radius.css)</h2>
+            <p class="text-[11px] text-muted-foreground">نمونه رندر دکمه‌ها، فیلدها و کانتینرهای بومی وب که بدون نیاز به نوشتن کلاس‌های تیلوند به صورت خودکار استایل سیستم را به ارث می‌برند.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-border/40 pt-6">
+            <!-- Native Interactive elements -->
+            <div class="flex flex-col gap-4">
+              <h3 class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">دکمه‌ها و سلکتورهای بومی:</h3>
+              <div class="flex flex-col gap-3">
+                <button>دکمه بومی &lt;button&gt;</button>
+                <button class="btn bg-secondary text-secondary-foreground border border-border/60 hover:bg-muted/80">دکمه با کلاس .btn</button>
+                <select>
+                  <option>گزینه ۱ (بومی &lt;select&gt;)</option>
+                  <option>گزینه ۲</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Native Inputs -->
+            <div class="flex flex-col gap-4">
+              <h3 class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">فیلدهای بومی فرم:</h3>
+              <div class="flex flex-col gap-3">
+                <input type="text" placeholder="ورودی متنی بومی..." />
+                <textarea placeholder="فیلد متنی چندخطی بومی..." rows="2" class="h-auto"></textarea>
+              </div>
+            </div>
+
+            <!-- Native Containers -->
+            <div class="flex flex-col gap-4">
+              <h3 class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">کانتینرهای بومی با کلاس‌های معنایی:</h3>
+              <div class="flex flex-col gap-3">
+                <div class="card text-xs p-4 flex flex-col gap-2">
+                  <span class="font-bold text-foreground">کارت بومی با کلاس .card</span>
+                  <span class="text-muted-foreground text-[10px]">استفاده از افکت سایه و حاشیه پیش‌فرض شدسن.</span>
+                </div>
+                <div class="popover text-xs p-3">
+                  <span class="font-bold text-foreground">پاپ‌اور با کلاس .popover</span>
+                  <span class="text-muted-foreground text-[10px] block mt-1">طراحی شناور با سایه عمیق‌تر.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Typography Native Elements Showcase -->
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6 lg:col-span-2 animate-in fade-in-50">
+          <div class="flex flex-col gap-1">
+            <h2 class="text-sm font-extrabold text-foreground">عناصر بومی تایپوگرافی (Typography Elements via typography.css)</h2>
+            <p class="text-[11px] text-muted-foreground">چیدمان متون طولانی یا کدهای لود شده از دیتابیس (مانند بدنه وبلاگ یا ویکی) که استایل‌های رسمی شدسن را به صورت پیش‌فرض و سازگار با زبان فارسی (RTL) به ارث می‌برند.</p>
+          </div>
+
+          <div class="border-t border-border/40 pt-6 flex flex-col gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <!-- Headings -->
+              <div class="flex flex-col gap-4 bg-background/30 p-4 rounded-lg border border-border/30">
+                <h3 class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">عناوین و تیترها:</h3>
+                <div class="flex flex-col gap-4">
+                  <h1 class="mt-0 text-3xl lg:text-4xl">تیتر H1: عنوان اصلی پلتفرم</h1>
+                  <h2 class="mt-0 pb-1 border-b text-2xl">تیتر H2: بخش‌های اصلی متن</h2>
+                  <h3 class="mt-0 text-xl">تیتر H3: تیترهای فرعی و کوچک</h3>
+                  <h4 class="mt-0 text-lg">تیتر H4: عناوین داخل باکس‌ها</h4>
+                </div>
+              </div>
+
+              <!-- Paragraphs & Quotes -->
+              <div class="flex flex-col gap-4 bg-background/30 p-4 rounded-lg border border-border/30 flex-1">
+                <h3 class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">پاراگراف، نقل‌قول و کد درون‌خطی:</h3>
+                <div class="flex flex-col gap-4">
+                  <p class="mt-0 text-foreground/90 leading-7">این یک پاراگراف متنی ساده است. توسعه‌دهنده بدون نوشتن هیچ کلاسی می‌تواند متون طولانی را با فاصله خطوط مناسب و خوانا نمایش دهد. همچنین می‌توان از <code>code درون‌خطی</code> برای نمایش متون فنی استفاده کرد.</p>
+                  <blockquote class="mt-2">
+                    این یک نقل‌قول (Blockquote) است که با جهت راست‌چین (RTL) کاملاً سازگار است و حاشیه آن به سمت راست منتقل می‌شود.
+                  </blockquote>
+                </div>
+              </div>
+            </div>
+
+            <!-- Table & Lists -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <!-- Unordered List -->
+              <div class="flex flex-col gap-4 bg-background/30 p-4 rounded-lg border border-border/30">
+                <h3 class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">لیست‌های نشانه‌دار (Unordered):</h3>
+                <ul class="my-0 pr-5 list-disc">
+                  <li>آیتم اول لیست نشانه‌دار</li>
+                  <li>آیتم دوم با فاصله استاندارد</li>
+                  <li>آیتم سوم با توکن‌های فاصله‌گذاری</li>
+                </ul>
+              </div>
+
+              <!-- Ordered List -->
+              <div class="flex flex-col gap-4 bg-background/30 p-4 rounded-lg border border-border/30">
+                <h3 class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">لیست‌های عددی (Ordered):</h3>
+                <ol class="my-0 pr-5 list-decimal">
+                  <li>مراحل انجام کار اول</li>
+                  <li>تنظیم کدهای پایه پروژه</li>
+                  <li>تست در محیط‌های آزمایشگاهی</li>
+                </ol>
+              </div>
+
+              <!-- Table -->
+              <div class="flex flex-col gap-4 bg-background/30 p-4 rounded-lg border border-border/30">
+                <h3 class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">جدول داده‌ها (Tables):</h3>
+                <div class="overflow-x-auto w-full">
+                  <table class="my-0 w-full text-xs">
+                    <thead>
+                      <tr>
+                        <th>بخش</th>
+                        <th>ردیوس</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>دکمه‌ها</td>
+                        <td>rounded-md</td>
+                      </tr>
+                      <tr>
+                        <td>کارت‌ها</td>
+                        <td>rounded-lg</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- TAB 2: SYSTEM TOKENS (COLORS, TYPOGRAPHY, SPACING & ICONS) -->
       <div v-else class="flex flex-col gap-12 w-full">
         
         <!-- Theme Colors Grid -->
-        <div class="bg-card/30 border border-border/60 rounded-xl p-6 shadow-xs flex flex-col gap-6 w-full">
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6 w-full">
           <div class="flex items-center gap-2 text-foreground justify-start">
             <LayoutGridIcon class="size-4 text-primary" />
-            <h2 class="text-sm font-bold">پالت رنگ‌های سیستم (Theme Colors)</h2>
+            <h2 class="text-sm font-extrabold">پالت رنگ‌های سیستم (Theme Colors)</h2>
           </div>
           <p class="text-xs text-muted-foreground">متغیرهای رسمی استایل‌دهی شدسن بر اساس تیره و روشن (تم رنگ متغیر OKLCH).</p>
           
@@ -401,10 +655,10 @@ const baseIcons = [
         </div>
 
         <!-- Semantic Tints & Shades -->
-        <div class="bg-card/30 border border-border/60 rounded-xl p-6 shadow-xs flex flex-col gap-6 w-full animate-in fade-in-50">
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6 w-full animate-in fade-in-50">
           <div class="flex items-center gap-2 text-foreground justify-start">
             <LayoutGridIcon class="size-4 text-primary" />
-            <h2 class="text-sm font-bold">طیف‌های فرعی و غلظت رنگ‌ها (Tints & Shades)</h2>
+            <h2 class="text-sm font-extrabold">طیف‌های فرعی و غلظت رنگ‌ها (Tints & Shades)</h2>
           </div>
           <p class="text-xs text-muted-foreground">تست رنگ‌های اصلی سیستم به همراه طیف‌های مختلف شید و تینت با استفاده از ضرایب اپسیتی (Opacity/Alpha modifiers) مرسوم در شدسن.</p>
           
@@ -420,60 +674,15 @@ const baseIcons = [
               </div>
               
               <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
-                <!-- 100% (Solid) -->
-                <div class="flex flex-col gap-1 p-1 bg-background/50 border border-border/40 rounded-lg">
-                  <div :class="['h-8 w-full rounded', `bg-${shade.baseClass}`]" />
+                <div 
+                  v-for="swatch in shade.swatches" 
+                  :key="swatch.label" 
+                  class="flex flex-col gap-1 p-1 bg-background/50 border border-border/40 rounded-lg"
+                >
+                  <div :class="['h-8 w-full rounded', swatch.class]" />
                   <div class="flex flex-col text-center font-mono text-[9px] text-muted-foreground leading-normal">
-                    <span class="font-bold text-foreground">Solid</span>
-                    <span>100%</span>
-                  </div>
-                </div>
-                <!-- 90% -->
-                <div class="flex flex-col gap-1 p-1 bg-background/50 border border-border/40 rounded-lg">
-                  <div :class="['h-8 w-full rounded', `bg-${shade.baseClass}/90`]" />
-                  <div class="flex flex-col text-center font-mono text-[9px] text-muted-foreground leading-normal">
-                    <span class="font-bold text-foreground">/90</span>
-                    <span>90%</span>
-                  </div>
-                </div>
-                <!-- 80% -->
-                <div class="flex flex-col gap-1 p-1 bg-background/50 border border-border/40 rounded-lg">
-                  <div :class="['h-8 w-full rounded', `bg-${shade.baseClass}/80`]" />
-                  <div class="flex flex-col text-center font-mono text-[9px] text-muted-foreground leading-normal">
-                    <span class="font-bold text-foreground">/80</span>
-                    <span>80%</span>
-                  </div>
-                </div>
-                <!-- 50% -->
-                <div class="flex flex-col gap-1 p-1 bg-background/50 border border-border/40 rounded-lg">
-                  <div :class="['h-8 w-full rounded', `bg-${shade.baseClass}/50`]" />
-                  <div class="flex flex-col text-center font-mono text-[9px] text-muted-foreground leading-normal">
-                    <span class="font-bold text-foreground">/50</span>
-                    <span>50%</span>
-                  </div>
-                </div>
-                <!-- 30% -->
-                <div class="flex flex-col gap-1 p-1 bg-background/50 border border-border/40 rounded-lg">
-                  <div :class="['h-8 w-full rounded', `bg-${shade.baseClass}/30`]" />
-                  <div class="flex flex-col text-center font-mono text-[9px] text-muted-foreground leading-normal">
-                    <span class="font-bold text-foreground">/30</span>
-                    <span>30%</span>
-                  </div>
-                </div>
-                <!-- 20% -->
-                <div class="flex flex-col gap-1 p-1 bg-background/50 border border-border/40 rounded-lg">
-                  <div :class="['h-8 w-full rounded', `bg-${shade.baseClass}/20`]" />
-                  <div class="flex flex-col text-center font-mono text-[9px] text-muted-foreground leading-normal">
-                    <span class="font-bold text-foreground">/20</span>
-                    <span>20%</span>
-                  </div>
-                </div>
-                <!-- 10% -->
-                <div class="flex flex-col gap-1 p-1 bg-background/50 border border-border/40 rounded-lg">
-                  <div :class="['h-8 w-full rounded', `bg-${shade.baseClass}/10`]" />
-                  <div class="flex flex-col text-center font-mono text-[9px] text-muted-foreground leading-normal">
-                    <span class="font-bold text-foreground">/10</span>
-                    <span>10%</span>
+                    <span class="font-bold text-foreground">{{ swatch.label }}</span>
+                    <span>{{ swatch.pct }}</span>
                   </div>
                 </div>
               </div>
@@ -482,10 +691,10 @@ const baseIcons = [
         </div>
 
         <!-- Typography / Font Sizes Scale -->
-        <div class="bg-card/30 border border-border/60 rounded-xl p-6 shadow-xs flex flex-col gap-6 w-full">
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6 w-full">
           <div class="flex items-center gap-2 text-foreground justify-start">
             <TypeIcon class="size-4 text-primary" />
-            <h2 class="text-sm font-bold">مقیاس سایزبندی قلم‌ها (Font Size Scale)</h2>
+            <h2 class="text-sm font-extrabold">مقیاس سایزبندی قلم‌ها (Font Size Scale)</h2>
           </div>
           <p class="text-xs text-muted-foreground">اندازه‌های مختلف فونت مورد استفاده در طراحی با کلاس‌های استاندارد Tailwind CSS.</p>
           
@@ -507,10 +716,10 @@ const baseIcons = [
         </div>
 
         <!-- Variable Font weights display -->
-        <div class="bg-card/30 border border-border/60 rounded-xl p-6 shadow-xs flex flex-col gap-6 w-full">
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6 w-full">
           <div class="flex items-center gap-2 text-foreground justify-start">
             <TypeIcon class="size-4 text-primary" />
-            <h2 class="text-sm font-bold">وزن‌های فونت متغیر ابر (Abar-VF weights)</h2>
+            <h2 class="text-sm font-extrabold">وزن‌های فونت متغیر ابر (Abar-VF weights)</h2>
           </div>
           <p class="text-xs text-muted-foreground">بررسی رندر ضخامت و پایداری فونت متغیر طراحی شده در وزن‌های مختلف در مرورگر.</p>
           
@@ -553,10 +762,10 @@ const baseIcons = [
         </div>
 
         <!-- Spacing System Scale -->
-        <div class="bg-card/30 border border-border/60 rounded-xl p-6 shadow-xs flex flex-col gap-6 w-full">
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6 w-full">
           <div class="flex items-center gap-2 text-foreground justify-start">
             <RulerIcon class="size-4 text-primary" />
-            <h2 class="text-sm font-bold">سیستم فاصله‌گذاری و ابعاد (Spacing System)</h2>
+            <h2 class="text-sm font-extrabold">سیستم فاصله‌گذاری و ابعاد (Spacing System)</h2>
           </div>
           <p class="text-xs text-muted-foreground">تست مقادیر پیش‌فرض فاصله‌گذاری (Padding / Margin / Gaps) در پلتفرم به صورت پیکسل معادل.</p>
           
@@ -590,10 +799,10 @@ const baseIcons = [
         </div>
 
         <!-- Lucide Icons Showcase Grid -->
-        <div class="bg-card/30 border border-border/60 rounded-xl p-6 shadow-xs flex flex-col gap-6 w-full">
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6 w-full">
           <div class="flex items-center gap-2 text-foreground justify-start">
             <SettingsIcon class="size-4 text-primary" />
-            <h2 class="text-sm font-bold">مجموعه آیکون‌های پایه (Lucide Icons Showcase)</h2>
+            <h2 class="text-sm font-extrabold">مجموعه آیکون‌های پایه (Lucide Icons Showcase)</h2>
           </div>
           <p class="text-xs text-muted-foreground">۲۶ آیکون پایه و پراستفاده پکیج Lucide که در بخش‌های مختلف پروژه کاربرد دارند.</p>
           
@@ -602,11 +811,82 @@ const baseIcons = [
               <div 
                 v-for="item in baseIcons" 
                 :key="item.name" 
-                class="flex flex-col items-center justify-center p-4 bg-background/50 border border-border/40 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all group cursor-pointer"
+                class="flex flex-col items-center justify-center p-4 bg-background/50 border border-border/40 rounded-lg hover:border-primary/40 hover:bg-primary/5 transition-all group cursor-pointer"
               >
                 <component :is="item.icon" class="size-6 text-muted-foreground group-hover:text-primary transition-colors mb-2" />
                 <span class="text-[10px] text-foreground font-mono font-semibold">{{ item.name }}</span>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Border Radius Scale Panel -->
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6 w-full animate-in fade-in-50">
+          <div class="flex items-center gap-2 text-foreground justify-start">
+            <RulerIcon class="size-4 text-primary" />
+            <h2 class="text-sm font-extrabold">مقیاس انحنای لبه‌ها (Border Radius Scale)</h2>
+          </div>
+          <p class="text-xs text-muted-foreground">شعاع انحنای لبه‌های سیستم (بر اساس متغیر پایه <code>--radius: 0.5rem</code>) که به صورت متناسب و فرمول‌نویسی ریاضی محاسبه می‌شوند.</p>
+          
+          <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 border-t border-border/40 pt-6">
+            <div 
+              v-for="r in borderRadii" 
+              :key="r.name" 
+              class="flex flex-col gap-3 p-3 bg-background/50 border border-border/40 rounded-lg hover:border-border transition-colors text-center relative overflow-hidden"
+            >
+              <!-- Visual Swatch -->
+              <div :class="['w-full h-16 bg-primary/10 border border-primary/30 flex items-center justify-center font-bold text-xs', r.class]">
+                <div class="w-4 h-4 border-t-2 border-r-2 border-primary absolute top-4 right-4" :class="r.class" />
+                <span class="text-primary text-[10px] font-mono">{{ r.px }}</span>
+              </div>
+              <div class="flex flex-col gap-1 text-center w-full">
+                <span class="font-bold text-[11px] text-foreground font-mono">{{ r.name }}</span>
+                <code class="text-[9px] bg-muted/80 px-1 py-0.5 rounded text-muted-foreground font-mono truncate block" :title="r.value">{{ r.value }}</code>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom Typography Utilities Panel -->
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6 w-full animate-in fade-in-50">
+          <div class="flex items-center gap-2 text-foreground justify-start">
+            <TypeIcon class="size-4 text-primary" />
+            <h2 class="text-sm font-extrabold">کلاس‌های کمکی تایپوگرافی (Custom Typography Utilities)</h2>
+          </div>
+          <p class="text-xs text-muted-foreground">کلاس‌های کمکی ویژه که بر اساس ساختار متنی شدسن برای کاربردهای خاص تعریف شده‌اند.</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-border/40 pt-6">
+            <div 
+              v-for="typo in customTypography" 
+              :key="typo.class" 
+              class="p-4 bg-background/50 border border-border/40 rounded-lg flex flex-col gap-3 text-right"
+            >
+              <div class="flex justify-between items-center border-b border-border/20 pb-2">
+                <span class="font-bold text-xs text-primary font-mono">.{{ typo.class }}</span>
+                <span class="text-[10px] text-muted-foreground">{{ typo.desc }}</span>
+              </div>
+              <p :class="[typo.class, 'mt-0']">{{ typo.example }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layout Utilities Panel -->
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6 w-full animate-in fade-in-50">
+          <div class="flex items-center gap-2 text-foreground justify-start">
+            <LayoutGridIcon class="size-4 text-primary" />
+            <h2 class="text-sm font-extrabold">کلاس‌های چیدمان و لایوت (Layout Utilities)</h2>
+          </div>
+          <p class="text-xs text-muted-foreground">کلاس‌های پرکاربرد جهت فواصل بیرونی، پدینگ‌ها و گرید‌های استاندارد برای انسجام لایوت‌ها.</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-border/40 pt-6">
+            <div 
+              v-for="layout in layoutUtilities" 
+              :key="layout.class" 
+              class="p-4 bg-background/50 border border-border/40 rounded-lg flex flex-col gap-3 text-right"
+            >
+              <span class="font-bold text-xs text-primary font-mono">.{{ layout.class }}</span>
+              <p class="text-[11px] text-foreground font-medium leading-relaxed">{{ layout.desc }}</p>
+              <span class="text-[9px] text-muted-foreground mt-auto">کاربرد: {{ layout.use }}</span>
             </div>
           </div>
         </div>

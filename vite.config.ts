@@ -29,11 +29,11 @@ export default defineConfig(({ mode }) => {
       }
     ],
     server: {
-      port: isLabs ? 4000 : 3000,
+      port: isLabs ? 5000 : 5001,
     },
     build: {
       rollupOptions: {
-        input: (isLabs 
+        input: (isLabs
           ? { labs: path.resolve(__dirname, 'labs.html') }
           : { main: path.resolve(__dirname, 'index.html') }) as Record<string, string>
       }

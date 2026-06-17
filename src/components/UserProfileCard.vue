@@ -63,14 +63,14 @@ const handleSave = () => {
 </script>
 
 <template>
-  <div class="w-full bg-card border border-border/80 rounded-xl shadow-sm overflow-hidden transition-all duration-300">
+  <div class="w-full bg-card border border-border/80 rounded-lg shadow-sm overflow-hidden transition-all duration-300">
     
     <!-- LOADING STATE -->
-    <div v-if="state === 'loading'" class="p-6 space-y-6">
+    <div v-if="state === 'loading'" class="p-6 flex flex-col gap-6">
       <div class="flex items-center gap-4">
         <!-- Avatar skeleton -->
         <Skeleton class="size-14 rounded-full shrink-0" />
-        <div class="space-y-2 w-full">
+        <div class="flex flex-col gap-2 w-full">
           <!-- Name skeleton -->
           <Skeleton class="h-5 w-2/3" />
           <!-- Role skeleton -->
@@ -78,7 +78,7 @@ const handleSave = () => {
         </div>
       </div>
       
-      <div class="space-y-3 pt-4 border-t border-border/40">
+      <div class="flex flex-col gap-3 pt-4 border-t border-border/40">
         <Skeleton class="h-8 w-full" />
         <Skeleton class="h-8 w-full" />
       </div>
@@ -90,11 +90,11 @@ const handleSave = () => {
     </div>
 
     <!-- EMPTY STATE -->
-    <div v-else-if="state === 'empty'" class="p-8 text-center flex flex-col items-center justify-center space-y-4">
+    <div v-else-if="state === 'empty'" class="p-6 text-center flex flex-col items-center justify-center gap-4">
       <div class="size-12 rounded-full bg-muted flex items-center justify-center border border-border/40 text-muted-foreground">
         <InboxIcon class="size-6" />
       </div>
-      <div class="space-y-1">
+      <div class="flex flex-col gap-1">
         <h3 class="text-sm font-semibold text-foreground">اطلاعات کاربری یافت نشد</h3>
         <p class="text-xs text-muted-foreground max-w-xs">هیچ حساب کاربری در این بخش وجود ندارد یا دسترسی شما محدود شده است.</p>
       </div>
@@ -102,10 +102,10 @@ const handleSave = () => {
     </div>
 
     <!-- ERROR STATE -->
-    <div v-else-if="state === 'error'" class="p-6 space-y-4">
+    <div v-else-if="state === 'error'" class="p-6 flex flex-col gap-4">
       <div class="flex items-start gap-3 p-4 bg-destructive/10 text-destructive rounded-lg border border-destructive/20">
         <AlertTriangleIcon class="size-5 shrink-0 mt-0.5" />
-        <div class="space-y-1 text-right">
+        <div class="flex flex-col gap-1 text-right">
           <h4 class="text-sm font-bold">خطای سیستمی رخ داده است</h4>
           <p class="text-xs opacity-90 leading-relaxed">{{ errorMessage }}</p>
         </div>
@@ -128,7 +128,7 @@ const handleSave = () => {
             <UserIcon class="size-8" />
           </div>
           
-          <div class="space-y-1 w-full">
+          <div class="flex flex-col gap-1 w-full">
             <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
               <h3 class="text-lg font-bold text-foreground">{{ user.name }}</h3>
               
@@ -154,15 +154,15 @@ const handleSave = () => {
       </div>
 
       <!-- Card Body / Edit Form -->
-      <div class="p-6 space-y-4">
-        <div class="space-y-1">
+      <div class="p-6 grid gap-4">
+        <div class="flex flex-col gap-1">
           <Label for="card-name" class="text-xs text-muted-foreground">نام و نام خانوادگی:</Label>
           <div class="relative">
             <Input id="card-name" v-model="editedName" class="h-8 text-sm" placeholder="نام کاربر را وارد کنید" />
           </div>
         </div>
 
-        <div class="space-y-1">
+        <div class="flex flex-col gap-1">
           <Label for="card-email" class="text-xs text-muted-foreground">آدرس ایمیل:</Label>
           <div class="relative">
             <Input id="card-email" v-model="editedEmail" class="h-8 text-sm" placeholder="ایمیل کاربر را وارد کنید" />

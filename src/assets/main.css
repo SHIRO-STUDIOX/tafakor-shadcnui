@@ -1,10 +1,9 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @font-face {
-  font-family: 'Abar-VF';
-  src: url('/fonts/Abar-VF.woff2') format('woff2-variations'),
-    url('/fonts/Abar-VF.woff2') format('woff2');
+  font-family: 'Pinar';
+  src: url('/fonts/Pinar-VF-FD[DSTY,KSHD,wght].woff2') format('woff2-variations'),
+    url('/fonts/Pinar-VF-FD[DSTY,KSHD,wght].woff2') format('woff2');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -14,6 +13,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn-vue/tailwind.css";
+@import "./typography.css";
+@import "./spacing-radius.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -37,7 +38,7 @@
 }
 
 @theme inline {
-  --font-sans: 'Abar-VF', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Pinar', system-ui, -apple-system, sans-serif;
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -70,10 +71,13 @@
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 :root {
@@ -100,7 +104,7 @@
   --chart-3: oklch(0.466 0.025 107.3);
   --chart-4: oklch(0.394 0.023 107.4);
   --chart-5: oklch(0.286 0.016 107.4);
-  --radius: 0.625rem;
+  --radius: 0.5rem;
   --sidebar: oklch(0.988 0.003 106.5);
   --sidebar-foreground: oklch(0.153 0.006 107.1);
   --sidebar-primary: oklch(0.228 0.013 107.4);
@@ -156,39 +160,19 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "ss01", "cv11";
-
   }
-}
 
-/* 🟢 اضافه شدن استایل‌های رسمی تایپوگرافی شدسن متناسب با فونت شما بدون تغییر متغیرها */
-h1 {
-  @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
-}
+  /* متصل کردن مستقیم کلاس‌های وزن فونت به محور متغیر فونت (پینار) */
+  .font-thin { font-variation-settings: "wght" 100; font-weight: 100; }
+  .font-light { font-variation-settings: "wght" 300; font-weight: 300; }
+  .font-normal { font-variation-settings: "wght" 400; font-weight: 400; }
+  .font-medium { font-variation-settings: "wght" 500; font-weight: 500; }
+  .font-semibold { font-variation-settings: "wght" 600; font-weight: 600; }
+  .font-bold { font-variation-settings: "wght" 700; font-weight: 700; }
+  .font-extrabold { font-variation-settings: "wght" 800; font-weight: 800; }
+  .font-black { font-variation-settings: "wght" 900; font-weight: 900; }
 
-h2 {
-  @apply scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0;
-}
-
-h3 {
-  @apply scroll-m-20 text-2xl font-semibold tracking-tight;
-}
-
-h4 {
-  @apply scroll-m-20 text-xl font-semibold tracking-tight;
-}
-
-p {
-  @apply leading-7 [&:not(:first-child)]:mt-6;
-}
-
-blockquote {
-  @apply mt-6 border-r-4 border-muted pr-6 italic text-muted-foreground;
-}
-
-ul {
-  @apply my-6 list-disc pr-6 [&>li]:mt-2;
-}
-
-code {
-  @apply relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
+  /* نگاشت ضخامت هدینگ‌های بومی بر اساس تعاریف اصلی تایپوگرافی */
+  h1 { font-variation-settings: "wght" 800; }
+  h2, h3, h4 { font-variation-settings: "wght" 600; }
 }
