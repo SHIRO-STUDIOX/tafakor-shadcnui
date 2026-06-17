@@ -8,8 +8,11 @@ import TopicCard from '@/components/TopicCard.vue'
 import MinimalSearch from '@/components/MinimalSearch.vue'
 import ProfileOptionCard from '@/components/ProfileOptionCard.vue'
 import ProfileCard from '@/components/ProfileCard.vue'
+import PostCard from '@/components/PostCard.vue'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 import { 
   FlaskConicalIcon,
   SmartphoneIcon, 
@@ -32,12 +35,15 @@ import {
   SettingsIcon,
   LinkIcon,
   SparklesIcon,
-  PencilIcon
+  PencilIcon,
+  MessageCircleIcon,
+  ChevronLeftIcon
 } from '@lucide/vue'
 
 // Simulator configs
-const currentComponent = ref<'profile' | 'login' | 'header' | 'nav' | 'topic' | 'search' | 'profile-option' | 'profile-card-header'>('profile')
+const currentComponent = ref<'profile' | 'login' | 'header' | 'nav' | 'topic' | 'search' | 'profile-option' | 'profile-card-header' | 'post'>('profile')
 const viewportWidth = ref<'100%' | '768px' | '375px'>('100%')
+const sandboxBg = ref<'default' | 'gradient' | 'grid' | 'image'>('default')
 const activeState = ref<'idle' | 'loading' | 'error' | 'empty' | 'success'>('idle')
 
 // Compute available states based on the active component
@@ -49,7 +55,7 @@ const availableStates = computed(() => {
   }
 })
 
-const handleComponentChange = (comp: 'profile' | 'login' | 'header' | 'nav' | 'topic' | 'search' | 'profile-option' | 'profile-card-header') => {
+const handleComponentChange = (comp: 'profile' | 'login' | 'header' | 'nav' | 'topic' | 'search' | 'profile-option' | 'profile-card-header' | 'post') => {
   currentComponent.value = comp
   activeState.value = 'idle'
   logEvent('Component Changed', { component: comp })
@@ -241,6 +247,152 @@ const simulatorProfileCardStatus = ref<'success' | 'warning' | 'info' | 'muted'>
 const handleProfileCardEdit = () => {
   logEvent('ProfileCard: Edit Button Clicked', { name: simulatorProfileCardName.value })
 }
+
+// Post components simulation data and handlers
+interface Comment {
+  id: string | number
+  authorName: string
+  authorAvatar?: string
+  text: string
+  timestamp: string
+}
+
+interface Post {
+  id: number
+  author: {
+    name: string
+    avatarUrl: string
+    role: string
+  }
+  type: 'text' | 'image' | 'video' | 'audio'
+  content?: string
+  mediaUrl?: string
+  posterUrl?: string
+  duration?: string
+  timestamp: string
+  likesCount: number
+  liked: boolean
+  comments: Comment[]
+}
+
+const initialPosts: Post[] = [
+  {
+    id: 1,
+    author: {
+      name: 'سارا احمدی',
+      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
+      role: 'مدیر محصول تفکر'
+    },
+    type: 'text' as const,
+    content: 'سلام اعضای تیم! طرح اولیه بخش پست‌ها و کامپوننت‌های شیشه‌ای را آماده کردم. لطفاً نظرات خودتان را درباره ساختار جدید در بخش دیدگاه‌ها بنویسید.',
+    timestamp: '۱۴:۳۲ - ۲۷ خرداد ۱۴۰۵',
+    likesCount: 12,
+    liked: true,
+    comments: [
+      { id: 101, authorName: 'بابک رضایی', text: 'بسیار عالی و مینیمال شده، خسته نباشید!', timestamp: '۱۴:۳۵' },
+      { id: 102, authorName: 'نسیم مرادی', text: 'آیا افکت بلور در پس‌زمینه‌های متحرک هم به خوبی کار می‌کند؟', timestamp: '۱۴:۴۰' }
+    ]
+  },
+  {
+    id: 2,
+    author: {
+      name: 'سامان فتوحی',
+      avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
+      role: 'طراح ارشد رابط کاربری'
+    },
+    type: 'image' as const,
+    content: 'تصویر پس‌زمینه جدیدی که برای هدر پلتفرم طراحی کردم. نظرتون چیه؟ شفافیت کارت‌های روی این تصویر خیلی قشنگ دیده میشه.',
+    mediaUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80',
+    timestamp: '۱۲:۱۵ - ۲۷ خرداد ۱۴۰۵',
+    likesCount: 28,
+    liked: false,
+    comments: [
+      { id: 201, authorName: 'سارا احمدی', text: 'رنگ‌هاش فوق‌العاده است، هماهنگی خوبی با حالت تیره داره.', timestamp: '۱۲:۲۰' }
+    ]
+  },
+  {
+    id: 3,
+    author: {
+      name: 'علی کریمی',
+      avatarUrl: '',
+      role: 'برنامه‌نویس فرانت‌اند'
+    },
+    type: 'video' as const,
+    content: 'ویدیو تست کارکرد ترنزیشن‌های انیمیشن بازگشت هدر تفکر در نسخه موبایل. حتماً چک کنید.',
+    mediaUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+    posterUrl: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&auto=format&fit=crop&q=80',
+    timestamp: '۱۰:۰۵ - ۲۷ خرداد ۱۴۰۵',
+    likesCount: 9,
+    liked: false,
+    comments: []
+  },
+  {
+    id: 4,
+    author: {
+      name: 'پژمان مرادی',
+      avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80',
+      role: 'طراح تجربه کاربری'
+    },
+    type: 'audio' as const,
+    content: 'توضیحات صوتی در خصوص سناریوی پیام‌های یک‌طرفه در تایپک‌ها و نحوه پیاده‌سازی بخش دیدگاه‌ها روی هر کارت پست.',
+    mediaUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    duration: '06:12',
+    timestamp: '۰۹:۳۰ - ۲۷ خرداد ۱۴۰۵',
+    likesCount: 15,
+    liked: true,
+    comments: [
+      { id: 401, authorName: 'علی کریمی', text: 'فایل صوتی کاملاً واضح بود. ممنون.', timestamp: '۰۹:۴۵' }
+    ]
+  }
+]
+
+const mockPosts = ref([...initialPosts])
+
+const handlePostLike = (postId: number | string, liked: boolean) => {
+  const post = mockPosts.value.find(p => p.id === postId)
+  if (post) {
+    post.liked = liked
+    post.likesCount = liked ? (post.likesCount ?? 0) + 1 : (post.likesCount ?? 1) - 1
+  }
+  logEvent('Post: Like Toggle', { postId, liked })
+}
+
+const handlePostShare = (postId: number | string) => {
+  logEvent('Post: Share Clicked', { postId })
+}
+
+const handlePostCommentAdded = (postId: number | string, comment: Comment) => {
+  const post = mockPosts.value.find(p => p.id === postId)
+  if (post) {
+    if (!post.comments) post.comments = []
+    post.comments.push(comment)
+  }
+  logEvent('Post: Comment Added', { postId, comment })
+}
+
+const simulateNewPost = () => {
+  const newPost = {
+    id: Date.now(),
+    author: {
+      name: 'شایان مهدوی',
+      avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80',
+      role: 'توسعه‌دهنده فرانت‌اند'
+    },
+    type: 'text' as const,
+    content: 'این یک پست جدید شبیه‌سازی شده در تایپک است. برای مشاهده افکت شیشه‌ای و فاصله ۸ پیکسلی پست‌ها، اسکرول کنید.',
+    timestamp: 'هم‌اکنون',
+    likesCount: 0,
+    liked: false,
+    comments: []
+  }
+  mockPosts.value.unshift(newPost)
+  logEvent('Post: Simulated New Post Received', newPost)
+}
+
+const resetPosts = () => {
+  mockPosts.value = JSON.parse(JSON.stringify(initialPosts))
+  logEvent('Post: Feed Reset to Default', {})
+}
 </script>
 
 <template>
@@ -396,6 +548,21 @@ const handleProfileCardEdit = () => {
                 </span>
                 <CheckCircle2Icon v-if="currentComponent === 'profile-card-header'" class="size-3.5 text-primary" />
               </button>
+              <button 
+                @click="handleComponentChange('post')"
+                :class="[
+                  'w-full text-right px-3 py-2.5 text-xs font-medium rounded-lg border transition-all flex items-center justify-between cursor-pointer',
+                  currentComponent === 'post' 
+                    ? 'bg-primary/5 text-primary border-primary/30 font-bold' 
+                    : 'bg-background/20 border-border/40 text-foreground hover:bg-muted/40'
+                ]"
+              >
+                <span class="flex items-center gap-2">
+                  <MessageCircleIcon class="size-3.5" />
+                  پست‌های تایپک (تلگرام)
+                </span>
+                <CheckCircle2Icon v-if="currentComponent === 'post'" class="size-3.5 text-primary" />
+              </button>
             </div>
           </div>
 
@@ -432,6 +599,57 @@ const handleProfileCardEdit = () => {
               >
                 <LaptopIcon class="size-4 mb-1" />
                 دسکتاپ
+              </button>
+            </div>
+          </div>
+
+          <!-- Viewport background controls for glassmorphism testing -->
+          <div class="flex flex-col gap-2.5">
+            <Label class="text-[11px] font-semibold text-muted-foreground block">پس‌زمینه شبیه‌ساز (تست بلور):</Label>
+            <div class="grid grid-cols-2 gap-1.5">
+              <button 
+                @click="sandboxBg = 'default'; logEvent('Sandbox Background: Default', {})"
+                :class="[
+                  'px-2 py-1.5 rounded-lg text-[9.5px] font-semibold border text-center transition-all cursor-pointer outline-none',
+                  sandboxBg === 'default'
+                    ? 'bg-primary/5 text-primary border-primary/30 font-bold shadow-xs'
+                    : 'bg-background/20 border-border/40 text-foreground hover:bg-muted/40'
+                ]"
+              >
+                ساده (پیش‌فرض)
+              </button>
+              <button 
+                @click="sandboxBg = 'gradient'; logEvent('Sandbox Background: Colorful Gradient', {})"
+                :class="[
+                  'px-2 py-1.5 rounded-lg text-[9.5px] font-semibold border text-center transition-all cursor-pointer outline-none',
+                  sandboxBg === 'gradient'
+                    ? 'bg-primary/5 text-primary border-primary/30 font-bold shadow-xs'
+                    : 'bg-background/20 border-border/40 text-foreground hover:bg-muted/40'
+                ]"
+              >
+                گرادینت رنگی
+              </button>
+              <button 
+                @click="sandboxBg = 'grid'; logEvent('Sandbox Background: Figma Grid', {})"
+                :class="[
+                  'px-2 py-1.5 rounded-lg text-[9.5px] font-semibold border text-center transition-all cursor-pointer outline-none',
+                  sandboxBg === 'grid'
+                    ? 'bg-primary/5 text-primary border-primary/30 font-bold shadow-xs'
+                    : 'bg-background/20 border-border/40 text-foreground hover:bg-muted/40'
+                ]"
+              >
+                پترن شبکه‌ای (Grid)
+              </button>
+              <button 
+                @click="sandboxBg = 'image'; logEvent('Sandbox Background: Abstract Canvas', {})"
+                :class="[
+                  'px-2 py-1.5 rounded-lg text-[9.5px] font-semibold border text-center transition-all cursor-pointer outline-none',
+                  sandboxBg === 'image'
+                    ? 'bg-primary/5 text-primary border-primary/30 font-bold shadow-xs'
+                    : 'bg-background/20 border-border/40 text-foreground hover:bg-muted/40'
+                ]"
+              >
+                تصویر منظره
               </button>
             </div>
           </div>
@@ -485,7 +703,7 @@ const handleProfileCardEdit = () => {
                 ]"
               >
                 <span>صفحه اصلی (تفکر)</span>
-                <span class="text-[9px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">Home</span>
+                <Badge variant="secondary" class="text-[9px] px-1.5 h-4 text-muted-foreground">Home</Badge>
               </button>
               <button 
                 @click="simulatorIsInnerPage = true"
@@ -497,7 +715,7 @@ const handleProfileCardEdit = () => {
                 ]"
               >
                 <span>صفحه داخلی (بک فعال)</span>
-                <span class="text-[9px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">Inner</span>
+                <Badge variant="secondary" class="text-[9px] px-1.5 h-4 text-muted-foreground">Inner</Badge>
               </button>
             </div>
           </div>
@@ -559,19 +777,10 @@ const handleProfileCardEdit = () => {
           <div v-if="currentComponent === 'search'" class="flex flex-col gap-3 border-t border-border/40 pt-4 mt-1">
             <Label class="text-[11px] font-semibold text-muted-foreground block">شبیه‌سازی وضعیت جستجو:</Label>
             <div class="flex flex-col gap-1.5">
-              <button 
-                @click="simulatorSearchExpanded = !simulatorSearchExpanded"
-                class="w-full text-right px-3 py-2 text-xs font-medium rounded-lg border transition-all flex items-center justify-between bg-background/20 border-border/40 text-foreground hover:bg-muted/40 cursor-pointer"
-              >
-                <span>وضعیت باز/بسته (Expand)</span>
-                <span class="text-[9px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">
-                  {{ simulatorSearchExpanded ? 'باز شده' : 'بسته شده' }}
-                </span>
-              </button>
               <Button 
                 size="sm" 
                 variant="outline"
-                @click="simulatorSearchQuery = 'توسعه'; simulatorSearchExpanded = true; logEvent('Search: Force Query = توسعه', {})"
+                @click="simulatorSearchQuery = 'توسعه'; logEvent('Search: Force Query = توسعه', {})"
                 class="w-full text-xs font-semibold cursor-pointer"
               >
                 جستجوی کلمه «توسعه»
@@ -596,27 +805,27 @@ const handleProfileCardEdit = () => {
                 class="w-full text-right px-3 py-2 text-xs font-medium rounded-lg border transition-all flex items-center justify-between bg-background/20 border-border/40 text-foreground hover:bg-muted/40 cursor-pointer"
               >
                 <span>نشان‌گر تنظیمات (Settings)</span>
-                <span class="text-[9px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">
+                <Badge variant="secondary" class="text-[9px] px-1.5 h-4 text-muted-foreground">
                   {{ simulatorSettingsBadge || 'بدون نشان‌گر' }}
-                </span>
+                </Badge>
               </button>
               <button 
                 @click="simulatorConnectionsBadge = simulatorConnectionsBadge ? '' : '۳ فعال'"
                 class="w-full text-right px-3 py-2 text-xs font-medium rounded-lg border transition-all flex items-center justify-between bg-background/20 border-border/40 text-foreground hover:bg-muted/40 cursor-pointer"
               >
                 <span>نشان‌گر اتصال‌ها (Connections)</span>
-                <span class="text-[9px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">
+                <Badge variant="secondary" class="text-[9px] px-1.5 h-4 text-muted-foreground">
                   {{ simulatorConnectionsBadge || 'بدون نشان‌گر' }}
-                </span>
+                </Badge>
               </button>
               <button 
                 @click="simulatorAiBadge = simulatorAiBadge ? '' : 'جدید'"
                 class="w-full text-right px-3 py-2 text-xs font-medium rounded-lg border transition-all flex items-center justify-between bg-background/20 border-border/40 text-foreground hover:bg-muted/40 cursor-pointer"
               >
                 <span>نشان‌گر هوش مصنوعی (AI)</span>
-                <span class="text-[9px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">
+                <Badge variant="secondary" class="text-[9px] px-1.5 h-4 text-muted-foreground">
                   {{ simulatorAiBadge || 'بدون نشان‌گر' }}
-                </span>
+                </Badge>
               </button>
             </div>
           </div>
@@ -654,6 +863,28 @@ const handleProfileCardEdit = () => {
             </div>
           </div>
 
+          <!-- Post Specific Controls -->
+          <div v-if="currentComponent === 'post'" class="flex flex-col gap-3 border-t border-border/40 pt-4 mt-1">
+            <Label class="text-[11px] font-semibold text-muted-foreground block">شبیه‌سازی فید پست‌ها:</Label>
+            <div class="flex flex-col gap-1.5">
+              <Button 
+                size="sm" 
+                @click="simulateNewPost"
+                class="w-full text-xs font-semibold cursor-pointer"
+              >
+                شبیه‌سازی دریافت پست جدید
+              </Button>
+              <Button 
+                size="sm" 
+                variant="outline"
+                @click="resetPosts"
+                class="w-full text-xs font-semibold cursor-pointer"
+              >
+                ریست کردن لیست پست‌ها
+              </Button>
+            </div>
+          </div>
+
           <!-- Dev Note -->
           <div class="p-3 bg-muted/40 border border-border/40 rounded-lg text-[10px] leading-relaxed text-muted-foreground flex gap-2">
             <InfoIcon class="size-3.5 text-primary shrink-0 mt-0.5" />
@@ -678,14 +909,18 @@ const handleProfileCardEdit = () => {
             <div 
               :style="{ maxWidth: viewportWidth }" 
               :class="[
-                'w-full border border-dashed border-border bg-background/50 rounded-lg transition-all duration-300 ease-in-out shadow-xs overflow-hidden flex justify-center',
-                currentComponent === 'header' ? 'p-0' : 'p-4'
+                'w-full border border-dashed border-border rounded-lg transition-all duration-300 ease-in-out shadow-xs overflow-hidden flex justify-center',
+                currentComponent === 'header' ? 'p-0' : 'p-8',
+                sandboxBg === 'default' ? 'bg-sandbox-default' : '',
+                sandboxBg === 'gradient' ? 'bg-sandbox-gradient' : '',
+                sandboxBg === 'grid' ? 'bg-sandbox-grid' : '',
+                sandboxBg === 'image' ? 'bg-sandbox-image' : ''
               ]"
             >
-              <div :class="['w-full flex justify-center transition-all duration-300', currentComponent === 'header' ? 'max-w-none' : 'max-w-md']">
+              <div :class="['w-full flex justify-center transition-all duration-300', (currentComponent === 'header' || currentComponent === 'post') ? 'max-w-none' : 'max-w-md']">
                 <UserProfileCard 
                   v-if="currentComponent === 'profile'"
-                  :state="activeState" 
+                  :state="activeState === 'success' ? 'idle' : activeState" 
                   :user="mockUser" 
                   @save="handleSave"
                   @status-toggle="handleStatusToggle"
@@ -723,9 +958,9 @@ const handleProfileCardEdit = () => {
                         <h3 class="text-xs font-extrabold text-foreground">
                           شبیه‌ساز محتوای پلتفرم (تفکر)
                         </h3>
-                        <span class="text-[9px] bg-primary/10 text-primary px-2 py-0.5 rounded font-mono font-bold select-none">
+                        <Badge variant="secondary" class="text-[9px] px-2 py-0.5 font-mono font-bold select-none">
                           {{ simulatorIsInnerPage ? 'Inner Page' : 'Home' }}
-                        </span>
+                        </Badge>
                       </div>
 
                       <div v-if="!simulatorIsInnerPage" class="flex flex-col gap-2.5">
@@ -816,7 +1051,7 @@ const handleProfileCardEdit = () => {
                 >
                   <div class="flex items-center justify-between border-b border-border/40 pb-3 mb-1 px-1">
                     <h3 class="text-xs font-extrabold text-foreground">گفتگوهای فعال</h3>
-                    <span class="text-[9px] bg-secondary/80 px-2 py-0.5 rounded border border-border/50 text-muted-foreground font-mono">Telegram Style</span>
+                    <Badge variant="secondary" class="text-[9px] px-2 py-0.5 border border-border/50 text-muted-foreground font-mono">Telegram Style</Badge>
                   </div>
 
                   <!-- Vertical list of borderless cards (No borders/lines, separated purely by whitespace and hover effect) -->
@@ -841,68 +1076,30 @@ const handleProfileCardEdit = () => {
                   class="w-full flex flex-col gap-6"
                   dir="rtl"
                 >
-                  <!-- 1. Standalone Showcase -->
-                  <div class="w-full bg-card/45 border border-border/40 rounded-xl p-5 flex flex-col gap-3.5 text-right">
-                    <div class="border-b border-border/40 pb-2">
-                      <h3 class="text-xs font-extrabold text-foreground">۱. نمایش مستقل کامپوننت جستجو (تست ابعاد)</h3>
-                      <p class="text-[9.5px] text-muted-foreground mt-1">با کلیک روی آیکون سرچ، کامپوننت به آرامی و با انیمیشن در کل عرض باز می‌شود.</p>
-                    </div>
-                    
-                    <div class="flex justify-center py-2">
-                      <div class="w-full max-w-sm flex justify-start">
-                        <MinimalSearch 
-                          v-model="simulatorSearchQuery"
-                          v-model:expanded="simulatorSearchExpanded"
-                          @search="(q) => handleSearchEvent('SubmitQuery', { query: q })"
-                          @clear="handleSearchEvent('Clear', {})"
-                          @expand="handleSearchEvent('Expand', {})"
-                          @collapse="handleSearchEvent('Collapse', {})"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- 2. Integrated Header Mockup & Live Topic Filtering -->
+                  <!-- Integrated Live Search & Filtering Panel -->
                   <div class="w-full bg-card/45 border border-border/40 rounded-xl p-5 flex flex-col gap-4 text-right">
                     <div class="border-b border-border/40 pb-2 flex items-center justify-between">
                       <div>
-                        <h3 class="text-xs font-extrabold text-foreground">۲. شبیه‌سازی هدر تلگرام با جستجوی اکسپندشونده</h3>
-                        <p class="text-[9.5px] text-muted-foreground mt-1">در حالت باز، عنوان هدر پنهان شده و سرچ کل عرض را پر می‌کند.</p>
+                        <h3 class="text-xs font-extrabold text-foreground">جستجو و فیلتر گفتگوها</h3>
+                        <p class="text-[9.5px] text-muted-foreground mt-1">با تایپ کردن در فیلد زیر، نتایج به صورت آنی فیلتر می‌شوند.</p>
                       </div>
-                      <span class="text-[9px] bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded font-bold">زنده / تعاملی</span>
+                      <Badge variant="outline" class="text-[9px] border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 font-bold">زنده / تعاملی</Badge>
                     </div>
 
-                    <!-- Mock Header Container -->
-                    <div class="w-full h-16 bg-background/80 border border-border/60 rounded-xl p-3.5 flex items-center justify-between relative overflow-hidden transition-all duration-300">
-                      <!-- Right Side: Header Title (fades/slides out when expanded) -->
-                      <transition name="header-title-fade">
-                        <div v-if="!simulatorSearchExpanded" class="flex flex-col text-right shrink-0">
-                          <span class="text-xs font-bold text-foreground">پیام‌رسان تفکر</span>
-                          <span class="text-[8.5px] text-muted-foreground mt-0.5">شبیه‌ساز هدر چت</span>
-                        </div>
-                      </transition>
-
-                      <!-- Left Side: Expandable Search Bar container -->
-                      <div 
-                        class="transition-all duration-300 ease-in-out flex justify-end animate-search"
-                        :class="simulatorSearchExpanded ? 'w-full' : 'w-11'"
-                      >
-                        <MinimalSearch 
-                          v-model="simulatorSearchQuery"
-                          v-model:expanded="simulatorSearchExpanded"
-                          @search="(q) => handleSearchEvent('SubmitQuery', { query: q })"
-                          @clear="handleSearchEvent('Clear', {})"
-                          @expand="handleSearchEvent('Expand', {})"
-                          @collapse="handleSearchEvent('Collapse', {})"
-                        />
-                      </div>
+                    <!-- Clean Always-Open Search Input -->
+                    <div class="w-full py-2">
+                      <MinimalSearch 
+                        v-model="simulatorSearchQuery"
+                        @search="(q) => handleSearchEvent('SubmitQuery', { query: q })"
+                        @clear="handleSearchEvent('Clear', {})"
+                      />
                     </div>
 
                     <!-- Live search filtering list below -->
                     <div class="flex flex-col gap-2 mt-1">
                       <div class="flex items-center justify-between px-1">
                         <span class="text-[10px] font-bold text-foreground">نتایج فیلتر شده بر اساس جستجو ({{ filteredTopics.length }} مورد)</span>
-                        <span v-if="simulatorSearchQuery" class="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded">فیلتر فعال: {{ simulatorSearchQuery }}</span>
+                        <Badge v-if="simulatorSearchQuery" variant="secondary" class="text-[9px] px-1.5 py-0.5">فیلتر فعال: {{ simulatorSearchQuery }}</Badge>
                       </div>
 
                       <div class="flex flex-col gap-1.5 bg-background/20 border border-border/40 rounded-xl p-2 min-h-24">
@@ -935,7 +1132,7 @@ const handleProfileCardEdit = () => {
                 >
                   <div class="flex items-center justify-between border-b border-border/40 pb-3 mb-1 px-1">
                     <h3 class="text-xs font-extrabold text-foreground">منوی کاربری (گزینه‌ها)</h3>
-                    <span class="text-[9px] bg-secondary/80 px-2 py-0.5 rounded border border-border/50 text-muted-foreground font-mono">Profile Menu Items</span>
+                    <Badge variant="secondary" class="text-[9px] px-2 py-0.5 border border-border/50 text-muted-foreground font-mono">Profile Menu Items</Badge>
                   </div>
 
                   <!-- Vertical menu list (menu stack of ProfileOptionCards) -->
@@ -977,7 +1174,7 @@ const handleProfileCardEdit = () => {
                 >
                   <div class="flex items-center justify-between border-b border-border/40 pb-3 mb-1 px-1">
                     <h3 class="text-xs font-extrabold text-foreground">کارت هدر پروفایل</h3>
-                    <span class="text-[9px] bg-secondary/80 px-2 py-0.5 rounded border border-border/50 text-muted-foreground font-mono">Profile Header Card</span>
+                    <Badge variant="secondary" class="text-[9px] px-2 py-0.5 border border-border/50 text-muted-foreground font-mono">Profile Header Card</Badge>
                   </div>
 
                   <div class="w-full max-w-xs mx-auto py-6">
@@ -995,6 +1192,44 @@ const handleProfileCardEdit = () => {
                   </div>
                 </div>
 
+                <!-- PostCard Preview Feed (Telegram Topic style) -->
+                <div 
+                  v-else-if="currentComponent === 'post'"
+                  class="w-full flex flex-col gap-2 bg-radial from-card/5 to-card/0 border border-border/40 rounded-xl p-3.5 relative overflow-hidden"
+                  dir="rtl"
+                >
+                  <!-- Simulated colorful background elements to highlight blur/transparency -->
+                  <div class="absolute -top-12 -left-12 size-40 rounded-full bg-primary/8 blur-3xl pointer-events-none" />
+                  <div class="absolute -bottom-12 -right-12 size-40 rounded-full bg-accent/8 blur-3xl pointer-events-none" />
+                  
+                  <div class="flex items-center justify-between border-b border-border/40 pb-3 mb-1 px-1 z-10">
+                    <h3 class="text-xs font-extrabold text-foreground">تایپک: توسعه پلتفرم تفکر</h3>
+                    <Badge variant="secondary" class="text-[9px] px-2 py-0.5 border border-border/50 text-muted-foreground font-mono">Full Width Glass Feed</Badge>
+                  </div>
+
+                  <!-- Feed of posts separated by exactly 8px (gap-2) -->
+                  <div class="flex flex-col gap-2 w-full z-10">
+                    <PostCard
+                      v-for="post in mockPosts"
+                      :key="post.id"
+                      :id="post.id"
+                      :author="post.author"
+                      :type="post.type"
+                      :content="post.content"
+                      :mediaUrl="post.mediaUrl"
+                      :posterUrl="post.posterUrl"
+                      :duration="post.duration"
+                      :timestamp="post.timestamp"
+                      :likesCount="post.likesCount"
+                      :comments="post.comments"
+                      :liked="post.liked"
+                      @like="handlePostLike"
+                      @share="handlePostShare"
+                      @add-comment="handlePostCommentAdded"
+                    />
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -1006,7 +1241,7 @@ const handleProfileCardEdit = () => {
                 <TerminalIcon class="size-3.5 text-primary" />
                 کنسول ثبت رویدادها (Events Log)
               </h3>
-              <span class="text-[9px] bg-secondary/80 px-2 py-0.5 rounded border border-border/50 font-mono text-muted-foreground">Reactive Logs</span>
+              <Badge variant="secondary" class="text-[9px] px-2 py-0.5 border border-border/50 text-muted-foreground font-mono">Reactive Logs</Badge>
             </div>
 
             <div class="bg-background/80 border border-border/60 rounded-lg p-3 h-36 font-mono text-[10px] overflow-y-auto flex flex-col gap-2 scrollbar-thin">
@@ -1019,7 +1254,7 @@ const handleProfileCardEdit = () => {
                 class="flex items-start justify-between border-b border-border/20 pb-1.5 last:border-0"
               >
                 <div class="flex items-start gap-2 text-right">
-                  <span class="text-emerald-500 font-bold">▶</span>
+                  <ChevronLeftIcon class="size-3 text-emerald-550 dark:text-emerald-400 shrink-0 mt-0.5" />
                   <div>
                     <span class="text-primary font-bold ml-1">[{{ event.name }}]</span>
                     <span class="text-muted-foreground leading-normal break-all">{{ event.data }}</span>
@@ -1073,5 +1308,33 @@ const handleProfileCardEdit = () => {
 .list-fade-leave-to {
   opacity: 0;
   transform: translateY(5px);
+}
+
+/* Viewport Sandbox backgrounds for glassmorphism testing */
+.bg-sandbox-default {
+  background-color: var(--background);
+}
+.bg-sandbox-gradient {
+  background: radial-gradient(circle at 10% 20%, oklch(0.65 0.18 310) 0%, transparent 50%),
+              radial-gradient(circle at 90% 80%, oklch(0.55 0.16 190) 0%, transparent 50%),
+              radial-gradient(circle at 50% 50%, oklch(0.75 0.12 85) 0%, transparent 60%),
+              linear-gradient(135deg, oklch(0.25 0.08 260) 0%, oklch(0.18 0.04 280) 100%);
+}
+.dark .bg-sandbox-gradient {
+  background: radial-gradient(circle at 10% 20%, oklch(0.35 0.12 310) 0%, transparent 50%),
+              radial-gradient(circle at 90% 80%, oklch(0.25 0.1 190) 0%, transparent 50%),
+              radial-gradient(circle at 50% 50%, oklch(0.35 0.08 85) 0%, transparent 60%),
+              linear-gradient(135deg, oklch(0.12 0.03 260) 0%, oklch(0.08 0.02 280) 100%);
+}
+.bg-sandbox-grid {
+  background-image: linear-gradient(to right, var(--border) 1px, transparent 1px),
+                    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-color: var(--background);
+}
+.bg-sandbox-image {
+  background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80');
+  background-size: cover;
+  background-position: center;
 }
 </style>

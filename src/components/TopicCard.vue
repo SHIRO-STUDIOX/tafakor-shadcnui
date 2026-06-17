@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { Badge } from '@/components/ui/badge'
+import { PinIcon } from '@lucide/vue'
 
 const props = withDefaults(defineProps<{
   title: string
@@ -49,10 +51,10 @@ const avatarPlaceholder = computed(() => {
       <!-- Pinned marker indicator -->
       <span 
         v-if="pinned" 
-        class="absolute -top-1 -right-1 size-3.5 bg-primary rounded-full border-2 border-background flex items-center justify-center text-[7px] text-primary-foreground font-black"
+        class="absolute -top-1 -right-1 size-3.5 bg-primary rounded-full border border-background flex items-center justify-center text-primary-foreground"
         title="سنجاق شده"
       >
-        📌
+        <PinIcon class="size-2 text-primary-foreground fill-primary-foreground" />
       </span>
     </div>
 
@@ -66,13 +68,14 @@ const avatarPlaceholder = computed(() => {
         
         <!-- Category Labels -->
         <div class="flex items-center gap-1 shrink-0">
-          <span
+          <Badge
             v-for="label in labels"
             :key="label"
-            class="text-[8px] bg-secondary/80 text-muted-foreground border border-border/50 px-1.5 py-0.5 rounded-md font-bold select-none"
+            variant="secondary"
+            class="text-[8px] font-bold px-1.5 h-4 border border-border/50"
           >
             {{ label }}
-          </span>
+          </Badge>
         </div>
       </div>
 
@@ -90,12 +93,13 @@ const avatarPlaceholder = computed(() => {
       </span>
 
       <!-- Unread Count Badge -->
-      <div 
+      <Badge 
         v-if="unreadCount > 0"
-        class="min-w-5 h-5 bg-primary text-primary-foreground text-[10px] font-black rounded-full flex items-center justify-center px-1.5 shadow-xs select-none"
+        variant="default"
+        class="h-5 min-w-5 rounded-full text-[10px] font-black px-1.5 shadow-xs"
       >
         {{ unreadCount }}
-      </div>
+      </Badge>
     </div>
 
   </div>

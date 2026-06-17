@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { PencilIcon } from '@lucide/vue'
+import { Badge } from '@/components/ui/badge'
 
 const props = withDefaults(defineProps<{
   name: string
@@ -80,14 +81,14 @@ const statusClasses = computed(() => {
 
     <!-- Status Badge -->
     <div class="mt-3.5">
-      <span
+      <Badge
         :class="[
-          'inline-flex items-center px-2.5 py-0.5 rounded-full text-[8.5px] font-black border tracking-wide select-none',
+          'inline-flex items-center px-2.5 py-0.5 rounded-full text-[8.5px] font-bold border tracking-wide select-none',
           statusClasses
         ]"
       >
         {{ statusText }}
-      </span>
+      </Badge>
     </div>
   </div>
 </template>

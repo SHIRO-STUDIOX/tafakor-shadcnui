@@ -9,6 +9,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import { Skeleton } from '@/components/ui/skeleton'
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
+import { Avatar, AvatarFallback, AvatarImage, AvatarGroup, AvatarGroupCount } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { 
   SparklesIcon, 
   Trash2Icon, 
@@ -230,6 +232,7 @@ const baseIcons = [
   { name: 'Share2', icon: Share2Icon },
   { name: 'Eye', icon: EyeIcon },
 ]
+
 </script>
 
 <template>
@@ -598,6 +601,143 @@ const baseIcons = [
                     </tbody>
                   </table>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Showcase Avatar Panel -->
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6">
+          <div class="flex flex-col gap-1 text-right">
+            <h2 class="text-sm font-extrabold text-foreground">آواتارها (Avatar Primitives)</h2>
+            <p class="text-[11px] text-muted-foreground">نمایش آواتارهای کاربر در ابعاد مختلف و ترکیب‌های گوناگون به همراه عکس و حروف الفبای جایگزین.</p>
+          </div>
+
+          <div class="flex flex-col gap-6 border-t border-border/40 pt-6">
+            <div class="flex flex-col gap-2.5">
+              <h3 class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 text-right">آواتار تصویری و حروف جایگزین (Image & Fallback):</h3>
+              <div class="flex items-center gap-4">
+                <div class="flex flex-col items-center gap-1">
+                  <Avatar>
+                    <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="سارا احمدی" />
+                    <AvatarFallback>س‌ا</AvatarFallback>
+                  </Avatar>
+                  <span class="text-[9px] text-muted-foreground">تصویری</span>
+                </div>
+
+                <div class="flex flex-col items-center gap-1">
+                  <Avatar>
+                    <AvatarFallback class="bg-primary/10 text-primary font-bold text-xs">س‌ا</AvatarFallback>
+                  </Avatar>
+                  <span class="text-[9px] text-muted-foreground">حروف فارسی</span>
+                </div>
+
+                <div class="flex flex-col items-center gap-1">
+                  <Avatar>
+                    <AvatarFallback class="bg-accent/15 text-accent-foreground font-bold text-xs">SA</AvatarFallback>
+                  </Avatar>
+                  <span class="text-[9px] text-muted-foreground">حروف انگلیسی</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2.5">
+              <h3 class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 text-right">ابعاد مختلف (Avatar Sizes):</h3>
+              <div class="flex items-end gap-4">
+                <div class="flex flex-col items-center gap-1">
+                  <Avatar size="sm">
+                    <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" />
+                    <AvatarFallback>SM</AvatarFallback>
+                  </Avatar>
+                  <span class="text-[9px] text-muted-foreground">کوچک (SM)</span>
+                </div>
+
+                <div class="flex flex-col items-center gap-1">
+                  <Avatar>
+                    <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" />
+                    <AvatarFallback>DF</AvatarFallback>
+                  </Avatar>
+                  <span class="text-[9px] text-muted-foreground">معمولی</span>
+                </div>
+
+                <div class="flex flex-col items-center gap-1">
+                  <Avatar size="lg">
+                    <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" />
+                    <AvatarFallback>LG</AvatarFallback>
+                  </Avatar>
+                  <span class="text-[9px] text-muted-foreground">بزرگ (LG)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2.5">
+              <h3 class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 text-right">گروه آواتارها (Avatar Group):</h3>
+              <div class="flex items-center">
+                <AvatarGroup class="rtl:space-x-reverse">
+                  <Avatar>
+                    <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" />
+                    <AvatarFallback>U1</AvatarFallback>
+                  </Avatar>
+                  <Avatar>
+                    <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" />
+                    <AvatarFallback>U2</AvatarFallback>
+                  </Avatar>
+                  <Avatar>
+                    <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" />
+                    <AvatarFallback>U3</AvatarFallback>
+                  </Avatar>
+                  <AvatarGroupCount :count="12" />
+                </AvatarGroup>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Showcase Badge Panel -->
+        <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6">
+          <div class="flex flex-col gap-1 text-right">
+            <h2 class="text-sm font-extrabold text-foreground">برچسب‌ها (Badge Primitives)</h2>
+            <p class="text-[11px] text-muted-foreground">برچسب‌های وضعیت، آیکون‌دار و شمارش‌گر در واریانت‌های بصری پلتفرم تفکر.</p>
+          </div>
+
+          <div class="flex flex-col gap-6 border-t border-border/40 pt-6">
+            <div class="flex flex-col gap-2.5">
+              <h3 class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 text-right">واریانت‌های رسمی (Badge Styles):</h3>
+              <div class="flex flex-wrap gap-2">
+                <Badge>پیش‌فرض (Primary)</Badge>
+                <Badge variant="secondary">ثانویه (Secondary)</Badge>
+                <Badge variant="destructive">مخرب (Destructive)</Badge>
+                <Badge variant="outline">دورخط‌دار (Outline)</Badge>
+                <Badge variant="ghost">شیشه‌ای (Ghost)</Badge>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2.5">
+              <h3 class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 text-right">طراحی با آیکون و شمارنده‌ها (Icons & Counters):</h3>
+              <div class="flex flex-wrap gap-3 items-center">
+                <Badge class="flex items-center gap-1 bg-emerald-500/10 text-emerald-500 border-0">
+                  <CheckCircle2Icon class="size-3" />
+                  فعال / تایید شده
+                </Badge>
+                <Badge variant="secondary" class="flex items-center gap-1 font-bold">
+                  <SparklesIcon class="size-2.5 text-primary" />
+                  ویژگی جدید
+                </Badge>
+                <Badge variant="destructive" class="h-4.5 rounded-full px-1.5 text-[9px] font-bold font-mono">
+                  12
+                </Badge>
+                <Badge variant="secondary" class="h-4.5 rounded-full px-1.5 text-[9px] font-bold font-mono">
+                  5 جدید
+                </Badge>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2.5">
+              <h3 class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 text-right">لینک‌های برچسبی (Badge Links):</h3>
+              <div class="flex items-center gap-2">
+                <Badge variant="link" class="cursor-pointer">
+                  مشاهده همه تاپیک‌ها ←
+                </Badge>
               </div>
             </div>
           </div>

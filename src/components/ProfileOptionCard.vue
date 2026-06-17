@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { ChevronLeftIcon } from '@lucide/vue'
+import { Badge } from '@/components/ui/badge'
 
 const props = withDefaults(defineProps<{
   title: string
@@ -15,19 +15,6 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{
   (e: 'click'): void
 }>()
-
-// Compute badge variant classes
-const badgeClasses = computed(() => {
-  switch (props.badgeVariant) {
-    case 'destructive':
-      return 'bg-destructive/10 text-destructive border border-destructive/25'
-    case 'secondary':
-      return 'bg-secondary text-muted-foreground border border-border/60'
-    case 'default':
-    default:
-      return 'bg-primary/10 text-primary border border-primary/25'
-  }
-})
 </script>
 
 <template>
@@ -54,15 +41,13 @@ const badgeClasses = computed(() => {
     <!-- Left side: Badge & Arrow indicator -->
     <div class="flex items-center gap-2 shrink-0 mr-2">
       <!-- Badge element -->
-      <span
+      <Badge
         v-if="badgeText"
-        :class="[
-          'px-2 py-0.5 rounded-md text-[8.5px] font-black tracking-wide select-none',
-          badgeClasses
-        ]"
+        :variant="badgeVariant"
+        class="text-[8.5px] font-bold px-2 h-4.5"
       >
         {{ badgeText }}
-      </span>
+      </Badge>
 
       <!-- RTL pointing back chevron -->
       <ChevronLeftIcon class="size-4 text-muted-foreground/60 transition-transform duration-200 group-hover:-translate-x-0.5" />

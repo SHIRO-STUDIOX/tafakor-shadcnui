@@ -19,7 +19,13 @@ export default defineConfig(({ mode }) => {
         configureServer(server) {
           if (isLabs) {
             server.middlewares.use((req, res, next) => {
-              if (req.url === '/' || req.url === '/index.html') {
+              const url = req.url ? req.url.split('?')[0] : ''
+              if (
+                !url.includes('.') &&
+                !url.startsWith('/@') &&
+                !url.startsWith('/src/') &&
+                !url.startsWith('/node_modules/')
+              ) {
                 req.url = '/labs.html'
               }
               next()

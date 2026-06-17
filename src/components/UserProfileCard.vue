@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Badge } from '@/components/ui/badge'
 import { 
   UserIcon, 
   MailIcon, 
@@ -133,7 +134,7 @@ const handleSave = () => {
               <h3 class="text-lg font-bold text-foreground">{{ user.name }}</h3>
               
               <!-- Badges -->
-              <span 
+              <Badge 
                 :class="[
                   'text-[10px] font-semibold px-2 py-0.5 rounded-full border',
                   user.status === 'active' 
@@ -142,7 +143,7 @@ const handleSave = () => {
                 ]"
               >
                 {{ user.status === 'active' ? 'فعال' : 'غیرفعال' }}
-              </span>
+              </Badge>
             </div>
             
             <p class="text-xs text-muted-foreground flex items-center justify-center sm:justify-start gap-1">
