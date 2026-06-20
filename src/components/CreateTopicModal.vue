@@ -87,7 +87,7 @@ const nameLetter = computed(() => {
     >
       <!-- Modal Card -->
       <div 
-        class="w-full max-w-[380px] bg-card border border-border/80 rounded-2xl shadow-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col text-right"
+        class="w-full max-w-[380px] bg-card border border-border/80 rounded-xl shadow-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col text-right"
         @click.stop
       >
         <!-- Header -->

@@ -1427,12 +1427,30 @@ const resetPosts = () => {
                     </div>
 
                     <!-- Clean Always-Open Search Input -->
-                    <div class="w-full py-2">
-                      <MinimalSearch 
-                        v-model="simulatorSearchQuery"
-                        @search="(q) => handleSearchEvent('SubmitQuery', { query: q })"
-                        @clear="handleSearchEvent('Clear', {})"
-                      />
+                    <div class="w-full py-2 flex flex-col gap-4">
+                      <div class="flex flex-col gap-1.5">
+                        <span class="text-[10px] font-bold text-muted-foreground">حالت پیش‌فرض (همیشه باز):</span>
+                        <MinimalSearch 
+                          v-model="simulatorSearchQuery"
+                          @search="(q) => handleSearchEvent('SubmitQuery', { query: q })"
+                          @clear="handleSearchEvent('Clear', {})"
+                        />
+                      </div>
+
+                      <div class="flex flex-col gap-1.5">
+                        <div class="flex items-center justify-between">
+                          <span class="text-[10px] font-bold text-muted-foreground">حالت کم‌جا (Compact - لمس برای باز کردن مدال):</span>
+                          <span class="text-[9px] text-muted-foreground/60">(این دکمه را لمس کنید تا مودال جستجو باز شود)</span>
+                        </div>
+                        <div class="flex justify-end w-full">
+                          <MinimalSearch 
+                            compact
+                            v-model="simulatorSearchQuery"
+                            @search="(q) => handleSearchEvent('SubmitQuery', { query: q })"
+                            @clear="handleSearchEvent('Clear', {})"
+                          />
+                        </div>
+                      </div>
                     </div>
 
                     <!-- Live search filtering list below -->

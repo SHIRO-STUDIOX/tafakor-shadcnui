@@ -127,9 +127,9 @@ const handleAttachClick = () => {
     <!-- Muted/Disabled overlay message -->
     <div 
       v-if="props.disabled" 
-      class="absolute inset-0 bg-background/50 backdrop-blur-3xs rounded-2xl z-20 flex items-center justify-center border border-border/40"
+      class="absolute inset-0 bg-background/50 backdrop-blur-3xs rounded-xl z-20 flex items-center justify-center border border-border/40"
     >
-      <div class="bg-card/90 border border-border/80 rounded-xl px-4 py-2.5 flex items-center gap-2 shadow-sm">
+      <div class="bg-card/90 border border-border/80 rounded-lg px-4 py-2.5 flex items-center gap-2 shadow-sm">
         <AlertCircleIcon class="size-4 text-muted-foreground" />
         <span class="text-[11px] font-bold text-muted-foreground">شما اجازه ارسال پیام در این گفتگو را ندارید.</span>
       </div>
@@ -139,12 +139,12 @@ const handleAttachClick = () => {
     <transition name="attachments-slide">
       <div 
         v-if="attachments.length > 0" 
-        class="w-full bg-card/45 backdrop-blur-md border border-border/40 rounded-2xl p-3 flex gap-3 overflow-x-auto scrollbar-none z-10 text-right"
+        class="w-full bg-card/45 backdrop-blur-md border border-border/40 rounded-xl p-3 flex gap-3 overflow-x-auto scrollbar-none z-10 text-right"
       >
         <div 
           v-for="file in attachments" 
           :key="file.id"
-          class="size-16 rounded-xl border border-border/60 bg-background/40 relative overflow-hidden flex flex-col items-center justify-center shrink-0 group hover:border-primary/20 transition-colors"
+          class="size-16 rounded-lg border border-border/60 bg-background/40 relative overflow-hidden flex flex-col items-center justify-center shrink-0 group hover:border-primary/20 transition-colors"
         >
           <!-- Delete button (Top Right) -->
           <button 
@@ -199,16 +199,16 @@ const handleAttachClick = () => {
     </transition>
 
     <!-- Main Message Input Container -->
-    <div class="w-full bg-card/45 backdrop-blur-md border border-border/40 rounded-2xl p-2 pr-3 flex items-end gap-2 shadow-xs min-h-[48px]">
+    <div class="w-full bg-card/45 backdrop-blur-md border border-border/40 rounded-xl p-2 pr-3 flex items-end gap-2 shadow-xs min-h-[48px]">
       
       <!-- Attachment Button (Right) -->
       <button 
         @click="handleAttachClick"
         :disabled="props.disabled"
-        class="size-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors cursor-pointer shrink-0 outline-none active:scale-95"
+        class="size-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors cursor-pointer shrink-0 outline-none active:scale-95"
         title="افزودن فایل پیوست"
       >
-        <PaperclipIcon class="size-5" />
+        <PaperclipIcon class="size-5.5" />
       </button>
 
       <!-- Auto-resizing Text Input Area -->
@@ -218,7 +218,7 @@ const handleAttachClick = () => {
         :disabled="props.disabled"
         :placeholder="props.placeholder"
         rows="1"
-        class="flex-1 bg-transparent border-0 outline-none resize-none text-xs font-semibold leading-relaxed py-2 h-[40px] max-h-[160px] text-foreground focus:ring-0 placeholder:text-muted-foreground/60 scrollbar-thin"
+        class="flex-1 bg-transparent border-none outline-none resize-none text-xs font-semibold leading-relaxed py-2 h-[40px] max-h-[160px] text-foreground focus:outline-none focus:ring-0 focus:border-none focus-visible:ring-0 focus-visible:outline-none placeholder:text-muted-foreground/60 scrollbar-thin shadow-none"
         @input="adjustHeight"
         @keydown.enter.exact.prevent="handleSend"
       />
@@ -226,10 +226,10 @@ const handleAttachClick = () => {
       <!-- Emoji Picker Button (Left Middle) -->
       <button 
         :disabled="props.disabled"
-        class="size-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors cursor-pointer shrink-0 outline-none active:scale-95"
+        class="size-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors cursor-pointer shrink-0 outline-none active:scale-95"
         title="اموجی"
       >
-        <SmileIcon class="size-5" />
+        <SmileIcon class="size-5.5" />
       </button>
 
       <!-- Send/Record Button (Left) -->
@@ -237,7 +237,7 @@ const handleAttachClick = () => {
         @click="handleSend"
         :disabled="props.disabled"
         :class="[
-          'size-9 rounded-xl flex items-center justify-center transition-all shrink-0 outline-none cursor-pointer',
+          'size-9 rounded-lg flex items-center justify-center transition-all shrink-0 outline-none cursor-pointer',
           hasContent 
             ? 'bg-primary text-primary-foreground shadow-xs scale-100 active:scale-95' 
             : 'bg-transparent text-muted-foreground hover:text-foreground hover:bg-muted/80 active:scale-95'
@@ -245,8 +245,8 @@ const handleAttachClick = () => {
         :title="hasContent ? 'ارسال پیام' : 'ضبط صدا'"
       >
         <transition name="icon-swap" mode="out-in">
-          <SendIcon v-if="hasContent" class="size-4.5" />
-          <MicIcon v-else :class="['size-5', isRecording ? 'text-destructive animate-pulse' : '']" />
+          <SendIcon v-if="hasContent" class="size-5.5" />
+          <MicIcon v-else :class="['size-5.5', isRecording ? 'text-destructive animate-pulse' : '']" />
         </transition>
       </button>
 

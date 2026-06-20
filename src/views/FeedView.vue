@@ -238,11 +238,11 @@ const handleAddComment = (postId: string | number, comment: any) => {
             v-for="topic in filteredTopics" 
             :key="topic.title"
             v-bind="topic"
-            class="bg-card/45 border border-border/60 rounded-2xl p-4 shadow-2xs hover:bg-card/85 transition-all duration-200"
+            class="bg-card/45 border border-border/60 rounded-xl p-4 shadow-2xs hover:bg-card/85 transition-all duration-200"
             @click="selectedTopic = topic"
           />
           
-          <div v-if="filteredTopics.length === 0" class="text-center py-12 bg-card/20 rounded-2xl border border-border/60 text-xs text-muted-foreground font-medium">
+          <div v-if="filteredTopics.length === 0" class="text-center py-12 bg-card/20 rounded-xl border border-border/60 text-xs text-muted-foreground font-medium">
             هیچ گفتگویی مطابق با جستجوی شما یافت نشد.
           </div>
         </div>
@@ -260,7 +260,7 @@ const handleAddComment = (postId: string | number, comment: any) => {
           @add-comment="handleAddComment"
         />
         
-        <div v-if="filteredCurrentTopicPosts.length === 0" class="text-center py-12 bg-card/20 rounded-2xl border border-border/60 text-xs text-muted-foreground font-medium">
+        <div v-if="filteredCurrentTopicPosts.length === 0" class="text-center py-12 bg-card/20 rounded-xl border border-border/60 text-xs text-muted-foreground font-medium">
           هیچ مطلبی در این گفتگو ثبت نشده است.
         </div>
       </div>

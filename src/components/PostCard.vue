@@ -199,7 +199,7 @@ const formatTime = (timeInSeconds: number) => {
 
 <template>
   <div 
-    class="w-full bg-background/25 dark:bg-card/25 backdrop-blur-md border border-border rounded-2xl shadow-none transition-all duration-300 flex flex-col overflow-hidden text-right select-none"
+    class="w-full bg-background/25 dark:bg-card/25 backdrop-blur-md border border-border rounded-xl shadow-none transition-all duration-300 flex flex-col overflow-hidden text-right select-none"
     dir="rtl"
   >
     <!-- Card Top Header -->
@@ -247,7 +247,7 @@ const formatTime = (timeInSeconds: number) => {
       <!-- 1. IMAGE POST -->
       <div 
         v-if="type === 'image' && mediaUrl" 
-        class="relative w-full rounded-xl overflow-hidden shadow-xs group"
+        class="relative w-full rounded-lg overflow-hidden shadow-xs group"
       >
         <img 
           :src="mediaUrl" 
@@ -265,7 +265,7 @@ const formatTime = (timeInSeconds: number) => {
       <!-- 2. VIDEO POST -->
       <div 
         v-else-if="type === 'video' && mediaUrl" 
-        class="relative w-full rounded-xl overflow-hidden shadow-xs bg-black/40 group"
+        class="relative w-full rounded-lg overflow-hidden shadow-xs bg-black/40 group"
       >
         <video 
           ref="videoRef"
@@ -291,7 +291,7 @@ const formatTime = (timeInSeconds: number) => {
       <!-- 3. AUDIO POST (Highly customized glassmorphic audio player) -->
       <div 
         v-else-if="type === 'audio' && mediaUrl" 
-        class="w-full bg-white/5 dark:bg-black/10 rounded-xl p-4 flex flex-col gap-3"
+        class="w-full bg-white/5 dark:bg-black/10 rounded-lg p-4 flex flex-col gap-3"
       >
         <audio 
           ref="audioRef"
@@ -424,7 +424,7 @@ const formatTime = (timeInSeconds: number) => {
             </Avatar>
 
             <!-- Comment Content Box -->
-            <div class="flex-1 bg-white/5 dark:bg-black/15 rounded-xl px-3.5 py-2.5 flex flex-col gap-1">
+            <div class="flex-1 bg-white/5 dark:bg-black/15 rounded-lg px-3.5 py-2.5 flex flex-col gap-1">
               <div class="flex justify-between items-center">
                 <span class="text-[11.5px] font-extrabold text-foreground">{{ comment.authorName }}</span>
                 <span class="text-[10px] text-muted-foreground font-semibold">{{ toPersianDigits(comment.timestamp) }}</span>

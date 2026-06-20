@@ -105,7 +105,7 @@ const toggleGuide = () => {
 
 <template>
   <div 
-    class="w-full bg-card/45 backdrop-blur-md border border-border/40 rounded-2xl p-5 md:p-6 flex flex-col gap-5 select-none shadow-xs transition-all duration-300 relative overflow-hidden"
+    class="w-full bg-card/45 backdrop-blur-md border border-border/40 rounded-xl p-5 md:p-6 flex flex-col gap-5 select-none shadow-xs transition-all duration-300 relative overflow-hidden"
     dir="rtl"
   >
     <!-- Background subtle tint decoration -->
@@ -122,7 +122,7 @@ const toggleGuide = () => {
         <!-- Logo Indicator -->
         <div 
           :class="[
-            'size-9 rounded-xl flex items-center justify-center text-white font-black text-xs shadow-xs',
+            'size-9 rounded-lg flex items-center justify-center text-white font-black text-xs shadow-xs',
             props.platform === 'telegram' ? 'bg-sky-500' : 'bg-emerald-500'
           ]"
         >

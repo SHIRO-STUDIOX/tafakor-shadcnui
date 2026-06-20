@@ -41,7 +41,7 @@ const statusClasses = computed(() => {
 
 <template>
   <div
-    class="w-full bg-card/45 backdrop-blur-md border border-border/40 rounded-2xl p-6 py-9 flex flex-col items-center justify-center text-center relative select-none shadow-xs"
+    class="w-full bg-card/45 backdrop-blur-md border border-border/40 rounded-xl p-6 py-9 flex flex-col items-center justify-center text-center relative select-none shadow-xs"
     dir="rtl"
   >
     <!-- 40x40px Circular Avatar -->
