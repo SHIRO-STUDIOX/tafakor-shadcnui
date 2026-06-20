@@ -97,9 +97,8 @@ const handleSubmitOtp = () => {
   // Simulation for local standalone testing
   setTimeout(() => {
     isLoading.value = false
-    step.value = 'success'
     emit('stateChange', 'success')
-  }, 1500)
+  }, 1000)
 }
 
 // Resetting the flow
@@ -180,7 +179,7 @@ const handleReset = () => {
           </span>
           <span v-else class="flex items-center gap-2">
             ارسال کد تایید
-            <SendIcon class="size-3.5" />
+            <SendIcon data-icon="inline-end" />
           </span>
         </Button>
       </div>
@@ -219,7 +218,7 @@ const handleReset = () => {
             </span>
             <span v-else class="flex items-center gap-2">
               بررسی کد تایید
-              <CheckCircle2Icon class="size-3.5" />
+              <CheckCircle2Icon data-icon="inline-end" />
             </span>
           </Button>
 

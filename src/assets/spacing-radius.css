@@ -1,15 +1,16 @@
 @layer base {
   /* اعمال خودکار ردیوس و فواصل استاندارد روی المانهای بومی وب */
 
-  /* اعمال فونت پینار و فعال‌سازی سراسری اعداد فارسی روی تمامی ورودی‌ها و المان‌های تعاملی */
+  /* اعمال فونت ایران یکان ایکس و فعال‌سازی سراسری اعداد فارسی و نقطه‌های متصل روی تمامی ورودی‌ها و المان‌های تعاملی */
   input,
   textarea,
   select,
   button,
   .btn,
   [data-slot="input-otp-slot"] {
-    font-family: 'Pinar', var(--font-sans), sans-serif !important;
+    font-family: 'IRANYekanX', var(--font-sans), sans-serif !important;
     font-feature-settings: "ss01" on, "cv11" on !important;
+    font-variation-settings: "dots" 3 !important;
   }
 
   /* ۱. دکمهها و المانهای تعاملی پایه */

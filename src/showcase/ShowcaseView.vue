@@ -537,10 +537,10 @@ const baseIcons = [
               <div class="flex flex-col gap-4 bg-background/30 p-4 rounded-lg border border-border/30">
                 <h3 class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">عناوین و تیترها:</h3>
                 <div class="flex flex-col gap-4">
-                  <h1 class="mt-0 text-3xl lg:text-4xl">تیتر H1: عنوان اصلی پلتفرم</h1>
-                  <h2 class="mt-0 pb-1 border-b text-2xl">تیتر H2: بخش‌های اصلی متن</h2>
-                  <h3 class="mt-0 text-xl">تیتر H3: تیترهای فرعی و کوچک</h3>
-                  <h4 class="mt-0 text-lg">تیتر H4: عناوین داخل باکس‌ها</h4>
+                  <h1 class="mt-0 text-4xl lg:text-5xl">تیتر H1: عنوان اصلی پلتفرم</h1>
+                  <h2 class="mt-0 text-3xl">تیتر H2: بخش‌های اصلی متن</h2>
+                  <h3 class="mt-0 text-2xl">تیتر H3: تیترهای فرعی و کوچک</h3>
+                  <h4 class="mt-0 text-xl">تیتر H4: عناوین داخل باکس‌ها</h4>
                 </div>
               </div>
 
@@ -859,7 +859,7 @@ const baseIcons = [
         <div class="bg-card/30 border border-border/60 rounded-lg p-6 shadow-xs flex flex-col gap-6 w-full">
           <div class="flex items-center gap-2 text-foreground justify-start">
             <TypeIcon class="size-4 text-primary" />
-            <h2 class="text-sm font-extrabold">وزن‌های فونت متغیر ابر (Abar-VF weights)</h2>
+            <h2 class="text-sm font-extrabold">وزن‌های فونت متغیر ایران یکان ایکس (IRANYekanX weights)</h2>
           </div>
           <p class="text-xs text-muted-foreground">بررسی رندر ضخامت و پایداری فونت متغیر طراحی شده در وزن‌های مختلف در مرورگر.</p>
           
@@ -885,6 +885,11 @@ const baseIcons = [
             </div>
 
             <div class="py-3 flex flex-col md:flex-row md:items-center justify-between gap-2 text-right">
+              <span class="w-32 shrink-0 text-xs font-bold text-muted-foreground font-mono">Weight 600 (Semibold)</span>
+              <p class="text-lg text-foreground w-full text-right" style="font-weight: 600">خلاقیت با طراحی مینیمال و هوشمند - وزن ۶۰۰</p>
+            </div>
+
+            <div class="py-3 flex flex-col md:flex-row md:items-center justify-between gap-2 text-right">
               <span class="w-32 shrink-0 text-xs font-bold text-muted-foreground font-mono">Weight 700 (Bold)</span>
               <p class="text-lg text-foreground w-full text-right" style="font-weight: 700">خلاقیت با طراحی مینیمال و هوشمند - وزن ۷۰۰</p>
             </div>
@@ -897,6 +902,32 @@ const baseIcons = [
             <div class="py-3 flex flex-col md:flex-row md:items-center justify-between gap-2 text-right">
               <span class="w-32 shrink-0 text-xs font-bold text-muted-foreground font-mono">Weight 900 (Black)</span>
               <p class="text-lg text-foreground w-full text-right" style="font-weight: 900">خلاقیت با طراحی مینیمال و هوشمند - وزن ۹۰۰</p>
+            </div>
+
+            <!-- بخش تست محور متغیر نقاط (Dots Axis Tests) -->
+            <div class="py-3 flex flex-col md:flex-row md:items-center justify-between gap-2 text-right border-t border-dashed border-border/40 mt-4">
+              <span class="w-32 shrink-0 text-xs font-bold text-muted-foreground font-mono text-primary">Dots 0 (Default)</span>
+              <p class="text-lg text-foreground w-full text-right" style="font-variation-settings: 'wght' 700, 'dots' 0; font-weight: 700">خلاقیت با طراحی مینیمال و هوشمند - ت ق ی ش پ (Dots 0)</p>
+            </div>
+            
+            <div class="py-3 flex flex-col md:flex-row md:items-center justify-between gap-2 text-right">
+              <span class="w-32 shrink-0 text-xs font-bold text-muted-foreground font-mono text-primary">Dots 1</span>
+              <p class="text-lg text-foreground w-full text-right" style="font-variation-settings: 'wght' 700, 'dots' 1; font-weight: 700">خلاقیت با طراحی مینیمال و هوشمند - ت ق ی ش پ (Dots 1)</p>
+            </div>
+
+            <div class="py-3 flex flex-col md:flex-row md:items-center justify-between gap-2 text-right">
+              <span class="w-32 shrink-0 text-xs font-bold text-muted-foreground font-mono text-primary">Dots 2</span>
+              <p class="text-lg text-foreground w-full text-right" style="font-variation-settings: 'wght' 700, 'dots' 2; font-weight: 700">خلاقیت با طراحی مینیمال و هوشمند - ت ق ی ش پ (Dots 2)</p>
+            </div>
+
+            <div class="py-3 flex flex-col md:flex-row md:items-center justify-between gap-2 text-right">
+              <span class="w-32 shrink-0 text-xs font-bold text-muted-foreground font-mono text-primary">Dots 3</span>
+              <p class="text-lg text-foreground w-full text-right" style="font-variation-settings: 'wght' 700, 'dots' 3; font-weight: 700">خلاقیت با طراحی مینیمال و هوشمند - ت ق ی ش پ (Dots 3)</p>
+            </div>
+
+            <div class="py-3 flex flex-col md:flex-row md:items-center justify-between gap-2 text-right">
+              <span class="w-32 shrink-0 text-xs font-bold text-muted-foreground font-mono text-primary">Dots 4</span>
+              <p class="text-lg text-foreground w-full text-right" style="font-variation-settings: 'wght' 700, 'dots' 4; font-weight: 700">خلاقیت با طراحی مینیمال و هوشمند - ت ق ی ش پ (Dots 4)</p>
             </div>
           </div>
         </div>

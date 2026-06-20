@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @font-face {
-  font-family: 'Pinar';
-  src: url('/fonts/Pinar-VF-FD[DSTY,KSHD,wght].woff2') format('woff2-variations'),
-    url('/fonts/Pinar-VF-FD[DSTY,KSHD,wght].woff2') format('woff2');
+  font-family: 'IRANYekanX';
+  src: url('/fonts/IRANYekanXVF.woff2') format('woff2-variations'),
+    url('/fonts/IRANYekanXVF.woff2') format('woff2');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -37,7 +37,7 @@
 }
 
 @theme inline {
-  --font-sans: 'Pinar', system-ui, -apple-system, sans-serif;
+  --font-sans: 'IRANYekanX', system-ui, -apple-system, sans-serif;
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -159,19 +159,20 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "ss01", "cv11";
+    font-variation-settings: "dots" 3;
   }
 
-  /* متصل کردن مستقیم کلاس‌های وزن فونت به محور متغیر فونت (پینار) */
-  .font-thin { font-variation-settings: "wght" 100; font-weight: 100; }
-  .font-light { font-variation-settings: "wght" 300; font-weight: 300; }
-  .font-normal { font-variation-settings: "wght" 400; font-weight: 400; }
-  .font-medium { font-variation-settings: "wght" 500; font-weight: 500; }
-  .font-semibold { font-variation-settings: "wght" 600; font-weight: 600; }
-  .font-bold { font-variation-settings: "wght" 700; font-weight: 700; }
-  .font-extrabold { font-variation-settings: "wght" 800; font-weight: 800; }
-  .font-black { font-variation-settings: "wght" 900; font-weight: 900; }
+  /* تنظیمات کلاس‌های وزن فونت متغیر ایران یکان ایکس همراه با اتصال نقطه‌ها */
+  .font-thin { font-variation-settings: "wght" 100, "dots" 3; font-weight: 100; }
+  .font-light { font-variation-settings: "wght" 300, "dots" 3; font-weight: 300; }
+  .font-normal { font-variation-settings: "wght" 400, "dots" 3; font-weight: 400; }
+  .font-medium { font-variation-settings: "wght" 500, "dots" 3; font-weight: 500; }
+  .font-semibold { font-variation-settings: "wght" 600, "dots" 3; font-weight: 600; }
+  .font-bold { font-variation-settings: "wght" 700, "dots" 3; font-weight: 700; }
+  .font-extrabold { font-variation-settings: "wght" 800, "dots" 3; font-weight: 800; }
+  .font-black { font-variation-settings: "wght" 900, "dots" 3; font-weight: 900; }
 
-  /* نگاشت ضخامت هدینگ‌های بومی بر اساس تعاریف اصلی تایپوگرافی */
-  h1 { font-variation-settings: "wght" 800; }
-  h2, h3, h4 { font-variation-settings: "wght" 600; }
+  /* نگاشت ضخامت هدینگ‌های بومی همراه با اتصال نقطه‌ها */
+  h1 { font-variation-settings: "wght" 800, "dots" 3; font-weight: 800; }
+  h2, h3, h4 { font-variation-settings: "wght" 600, "dots" 3; font-weight: 600; }
 }

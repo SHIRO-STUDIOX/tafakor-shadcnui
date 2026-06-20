@@ -113,7 +113,7 @@ const handleSave = () => {
       </div>
       <div class="flex justify-end pt-2">
         <Button size="sm" variant="outline" class="flex items-center gap-1">
-          <XCircleIcon class="size-3.5" />
+          <XCircleIcon data-icon="inline-start" />
           بستن پیام
         </Button>
       </div>
@@ -179,7 +179,7 @@ const handleSave = () => {
           @click="emit('statusToggle')"
           class="text-xs flex items-center gap-1"
         >
-          <ActivityIcon class="size-3.5" />
+          <ActivityIcon data-icon="inline-start" />
           {{ user.status === 'active' ? 'غیرفعال‌سازی' : 'فعال‌سازی حساب' }}
         </Button>
 
@@ -189,7 +189,7 @@ const handleSave = () => {
             @click="handleSave"
             class="text-xs flex items-center gap-1.5"
           >
-            <CheckIcon class="size-3.5" />
+            <CheckIcon data-icon="inline-start" />
             ذخیره تغییرات
           </Button>
         </div>

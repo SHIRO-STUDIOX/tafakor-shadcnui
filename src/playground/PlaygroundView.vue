@@ -9,6 +9,9 @@ import MinimalSearch from '@/components/MinimalSearch.vue'
 import ProfileOptionCard from '@/components/ProfileOptionCard.vue'
 import ProfileCard from '@/components/ProfileCard.vue'
 import PostCard from '@/components/PostCard.vue'
+import CreateTopicModal from '@/components/CreateTopicModal.vue'
+import BotConnectionCard from '@/components/BotConnectionCard.vue'
+import TopicMessageInput from '@/components/TopicMessageInput.vue'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -37,14 +40,122 @@ import {
   SparklesIcon,
   PencilIcon,
   MessageCircleIcon,
-  ChevronLeftIcon
+  ChevronLeftIcon,
+  PlusIcon
 } from '@lucide/vue'
 
 // Simulator configs
-const currentComponent = ref<'profile' | 'login' | 'header' | 'nav' | 'topic' | 'search' | 'profile-option' | 'profile-card-header' | 'post'>('profile')
+const currentComponent = ref<'profile' | 'login' | 'header' | 'nav' | 'topic' | 'search' | 'profile-option' | 'profile-card-header' | 'post' | 'create-topic-modal' | 'bot-connection' | 'topic-input'>('profile')
 const viewportWidth = ref<'100%' | '768px' | '375px'>('100%')
 const sandboxBg = ref<'default' | 'gradient' | 'grid' | 'image'>('default')
 const activeState = ref<'idle' | 'loading' | 'error' | 'empty' | 'success'>('idle')
+
+// Create Topic Modal simulation state
+const simulatorIsModalOpen = ref(false)
+
+const handleModalCreate = (topic: any) => {
+  logEvent('CreateTopicModal: Topic Created', topic)
+  simulatorIsModalOpen.value = false
+}
+
+const handleModalClose = () => {
+  logEvent('CreateTopicModal: Modal Closed', {})
+  simulatorIsModalOpen.value = false
+}
+
+// Bot Connection simulation state
+const simulatorBotPlatform = ref<'telegram' | 'bale'>('telegram')
+const simulatorBotStatus = ref<'disconnected' | 'connecting' | 'connected' | 'conflict'>('disconnected')
+const simulatorBotToken = ref('')
+
+const handleBotConnect = (token: string) => {
+  simulatorBotToken.value = token
+  logEvent('BotConnectionCard: Connect Attempt', { platform: simulatorBotPlatform.value, token })
+  
+  simulatorBotStatus.value = 'connecting'
+  setTimeout(() => {
+    if (token.includes('conflict')) {
+      simulatorBotStatus.value = 'conflict'
+      logEvent('BotConnectionCard: Connection Failed (Conflict)', { reason: 'Token already used by another project' })
+    } else {
+      simulatorBotStatus.value = 'connected'
+      logEvent('BotConnectionCard: Connected Successfully', { platform: simulatorBotPlatform.value })
+    }
+  }, 1500)
+}
+
+const handleBotDisconnect = () => {
+  simulatorBotStatus.value = 'disconnected'
+  simulatorBotToken.value = ''
+  logEvent('BotConnectionCard: Disconnected', { platform: simulatorBotPlatform.value })
+}
+
+const handleBotEdit = (token: string) => {
+  logEvent('BotConnectionCard: Edit Token Requested', { platform: simulatorBotPlatform.value, currentToken: token })
+}
+
+// Topic Message Input simulation state
+const simulatorInputDisabled = ref(false)
+const simulatorInputPlaceholder = ref('پیام خود را بنویسید...')
+const simulatorInputText = ref('')
+const simulatorInputAttachments = ref<any[]>([])
+
+const simulateAddAttachment = (type: 'image' | 'video' | 'audio' | 'file') => {
+  const id = Date.now()
+  let newFile: any = {
+    id,
+    name: '',
+    type,
+    status: 'uploading',
+    progress: 0
+  }
+  
+  if (type === 'image') {
+    newFile.name = `image_${Math.floor(Math.random() * 1000)}.jpg`
+    newFile.url = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&auto=format&fit=crop&q=80'
+  } else if (type === 'video') {
+    newFile.name = `video_${Math.floor(Math.random() * 100)}.mp4`
+  } else if (type === 'audio') {
+    newFile.name = `voice_${Math.floor(Math.random() * 100)}.ogg`
+    newFile.size = '0:14'
+  } else {
+    newFile.name = `doc_${Math.floor(Math.random() * 100)}.pdf`
+    newFile.size = '1.4 MB'
+  }
+  
+  simulatorInputAttachments.value.push(newFile)
+  logEvent('TopicMessageInput: Simulated Attachment Added', { type, name: newFile.name })
+  
+  // Simulate progress
+  const interval = setInterval(() => {
+    const file = simulatorInputAttachments.value.find(f => f.id === id)
+    if (!file) {
+      clearInterval(interval)
+      return
+    }
+    
+    if (file.progress < 100) {
+      file.progress += 25
+      if (file.progress >= 100) {
+        file.progress = 100
+        file.status = 'completed'
+        logEvent('TopicMessageInput: Simulated Attachment Upload Completed', { name: file.name })
+        clearInterval(interval)
+      }
+    }
+  }, 400)
+}
+
+const handleInputSend = (msg: any) => {
+  logEvent('TopicMessageInput: Message Sent', msg)
+  simulatorInputText.value = ''
+  simulatorInputAttachments.value = []
+}
+
+const handleInputRemoveAttachment = (id: string | number) => {
+  logEvent('TopicMessageInput: Attachment Removed', { id })
+  simulatorInputAttachments.value = simulatorInputAttachments.value.filter(a => a.id !== id)
+}
 
 // Compute available states based on the active component
 const availableStates = computed(() => {
@@ -55,7 +166,7 @@ const availableStates = computed(() => {
   }
 })
 
-const handleComponentChange = (comp: 'profile' | 'login' | 'header' | 'nav' | 'topic' | 'search' | 'profile-option' | 'profile-card-header' | 'post') => {
+const handleComponentChange = (comp: 'profile' | 'login' | 'header' | 'nav' | 'topic' | 'search' | 'profile-option' | 'profile-card-header' | 'post' | 'create-topic-modal' | 'bot-connection' | 'topic-input') => {
   currentComponent.value = comp
   activeState.value = 'idle'
   logEvent('Component Changed', { component: comp })
@@ -411,8 +522,8 @@ const resetPosts = () => {
         </div>
         
         <!-- Reset button -->
-        <Button variant="outline" size="sm" @click="resetData" class="self-start md:self-auto flex items-center gap-1.5 cursor-pointer">
-          <RefreshCwIcon class="size-3.5" />
+        <Button variant="outline" size="sm" @click="resetData" class="self-start md:self-auto flex items-center cursor-pointer" data-icon="inline-start">
+          <RefreshCwIcon />
           ریست شبیه‌ساز
         </Button>
       </div>
@@ -562,6 +673,51 @@ const resetPosts = () => {
                   پست‌های تایپک (تلگرام)
                 </span>
                 <CheckCircle2Icon v-if="currentComponent === 'post'" class="size-3.5 text-primary" />
+              </button>
+              <button 
+                @click="handleComponentChange('create-topic-modal')"
+                :class="[
+                  'w-full text-right px-3 py-2.5 text-xs font-medium rounded-lg border transition-all flex items-center justify-between cursor-pointer',
+                  currentComponent === 'create-topic-modal' 
+                    ? 'bg-primary/5 text-primary border-primary/30 font-bold' 
+                    : 'bg-background/20 border-border/40 text-foreground hover:bg-muted/40'
+                ]"
+              >
+                <span class="flex items-center gap-2">
+                  <PlusIcon class="size-3.5 text-primary" />
+                  مودال ساخت تاپیک (جدید)
+                </span>
+                <CheckCircle2Icon v-if="currentComponent === 'create-topic-modal'" class="size-3.5 text-primary" />
+              </button>
+              <button 
+                @click="handleComponentChange('bot-connection')"
+                :class="[
+                  'w-full text-right px-3 py-2.5 text-xs font-medium rounded-lg border transition-all flex items-center justify-between cursor-pointer',
+                  currentComponent === 'bot-connection' 
+                    ? 'bg-primary/5 text-primary border-primary/30 font-bold' 
+                    : 'bg-background/20 border-border/40 text-foreground hover:bg-muted/40'
+                ]"
+              >
+                <span class="flex items-center gap-2">
+                  <LinkIcon class="size-3.5 text-primary" />
+                  کارت اتصال بات (جدید)
+                </span>
+                <CheckCircle2Icon v-if="currentComponent === 'bot-connection'" class="size-3.5 text-primary" />
+              </button>
+              <button 
+                @click="handleComponentChange('topic-input')"
+                :class="[
+                  'w-full text-right px-3 py-2.5 text-xs font-medium rounded-lg border transition-all flex items-center justify-between cursor-pointer',
+                  currentComponent === 'topic-input' 
+                    ? 'bg-primary/5 text-primary border-primary/30 font-bold' 
+                    : 'bg-background/20 border-border/40 text-foreground hover:bg-muted/40'
+                ]"
+              >
+                <span class="flex items-center gap-2">
+                  <MessageCircleIcon class="size-3.5 text-primary" />
+                  ورودی پیام تایپک (جدید)
+                </span>
+                <CheckCircle2Icon v-if="currentComponent === 'topic-input'" class="size-3.5 text-primary" />
               </button>
             </div>
           </div>
@@ -882,6 +1038,190 @@ const resetPosts = () => {
               >
                 ریست کردن لیست پست‌ها
               </Button>
+            </div>
+          </div>
+
+          <!-- Create Topic Modal Specific Controls -->
+          <div v-if="currentComponent === 'create-topic-modal'" class="flex flex-col gap-3 border-t border-border/40 pt-4 mt-1">
+            <Label class="text-[11px] font-semibold text-muted-foreground block">تنظیمات مودال ساخت تاپیک:</Label>
+            <div class="flex flex-col gap-1.5">
+              <Button 
+                size="sm" 
+                @click="simulatorIsModalOpen = true"
+                class="w-full text-xs font-semibold cursor-pointer"
+              >
+                باز کردن مودال
+              </Button>
+            </div>
+          </div>
+
+          <!-- Bot Connection Specific Controls -->
+          <div v-if="currentComponent === 'bot-connection'" class="flex flex-col gap-3 border-t border-border/40 pt-4 mt-1">
+            <Label class="text-[11px] font-semibold text-muted-foreground block">تنظیمات کارت اتصال بات:</Label>
+            
+            <!-- Platform Toggle -->
+            <div class="flex flex-col gap-1.5">
+              <Label class="text-[9.5px] text-muted-foreground">پلتفرم:</Label>
+              <div class="grid grid-cols-2 gap-1 bg-muted/65 p-1 rounded-lg border border-border/40">
+                <button 
+                  @click="simulatorBotPlatform = 'telegram'; logEvent('Bot: Platform set to Telegram', {})"
+                  :class="[
+                    'py-1 rounded text-[9px] font-bold transition-all cursor-pointer outline-none border border-transparent',
+                    simulatorBotPlatform === 'telegram' 
+                      ? 'bg-background text-foreground shadow-xs font-black' 
+                      : 'text-muted-foreground hover:text-foreground'
+                  ]"
+                >
+                  تلگرام
+                </button>
+                <button 
+                  @click="simulatorBotPlatform = 'bale'; logEvent('Bot: Platform set to Bale', {})"
+                  :class="[
+                    'py-1 rounded text-[9px] font-bold transition-all cursor-pointer outline-none border border-transparent',
+                    simulatorBotPlatform === 'bale' 
+                      ? 'bg-background text-foreground shadow-xs font-black' 
+                      : 'text-muted-foreground hover:text-foreground'
+                  ]"
+                >
+                  بله
+                </button>
+              </div>
+            </div>
+
+            <!-- Connection Status Selector -->
+            <div class="flex flex-col gap-1.5">
+              <Label class="text-[9.5px] text-muted-foreground">وضعیت اتصال:</Label>
+              <div class="grid grid-cols-2 gap-1 bg-muted/65 p-1 rounded-lg border border-border/40">
+                <button 
+                  v-for="st in (['disconnected', 'connecting', 'connected', 'conflict'] as const)"
+                  :key="st"
+                  @click="simulatorBotStatus = st; logEvent(`Bot: Status set to ${st}`, {})"
+                  :class="[
+                    'py-1 rounded text-[9px] font-bold transition-all cursor-pointer outline-none border border-transparent',
+                    simulatorBotStatus === st 
+                      ? 'bg-background text-foreground shadow-xs font-black' 
+                      : 'text-muted-foreground/80 hover:text-foreground'
+                  ]"
+                >
+                  {{ 
+                    st === 'disconnected' ? 'غیرمتصل' :
+                    st === 'connecting' ? 'درحال اتصال' :
+                    st === 'connected' ? 'متصل' : 'تداخل'
+                  }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Simulated Event Actions -->
+            <div class="flex flex-col gap-1.5 mt-2">
+              <Button 
+                size="sm" 
+                variant="outline"
+                @click="simulatorBotStatus = 'conflict'; logEvent('Bot: Simulated sudden disconnection error (conflict)', {})"
+                class="w-full text-xs font-semibold text-amber-600 border-amber-550/20 hover:bg-amber-500/5 cursor-pointer"
+              >
+                شبیه‌سازی خطای تداخل
+              </Button>
+              <Button 
+                size="sm" 
+                variant="outline"
+                @click="simulatorBotToken = '123456:conflict-token'; logEvent('Bot: Force set conflict token', {})"
+                class="w-full text-xs font-semibold cursor-pointer"
+              >
+                تنظیم توکن تداخل‌ساز
+              </Button>
+            </div>
+          </div>
+
+          <!-- Topic Message Input Specific Controls -->
+          <div v-if="currentComponent === 'topic-input'" class="flex flex-col gap-3 border-t border-border/40 pt-4 mt-1">
+            <Label class="text-[11px] font-semibold text-muted-foreground block">تنظیمات ورودی پیام تایپک:</Label>
+            
+            <!-- Access/Disabled Toggle -->
+            <div class="flex flex-col gap-1.5">
+              <Label class="text-[9.5px] text-muted-foreground">سطح دسترسی نوشتن:</Label>
+              <div class="grid grid-cols-2 gap-1 bg-muted/65 p-1 rounded-lg border border-border/40">
+                <button 
+                  @click="simulatorInputDisabled = false; logEvent('Input: Writing enabled', {})"
+                  :class="[
+                    'py-1 rounded text-[9px] font-bold transition-all cursor-pointer outline-none border border-transparent',
+                    !simulatorInputDisabled 
+                      ? 'bg-background text-foreground shadow-xs font-black' 
+                      : 'text-muted-foreground hover:text-foreground'
+                  ]"
+                >
+                  مجاز
+                </button>
+                <button 
+                  @click="simulatorInputDisabled = true; logEvent('Input: Muted/Disabled', {})"
+                  :class="[
+                    'py-1 rounded text-[9px] font-bold transition-all cursor-pointer outline-none border border-transparent',
+                    simulatorInputDisabled 
+                      ? 'bg-background text-foreground shadow-xs font-black' 
+                      : 'text-muted-foreground hover:text-foreground'
+                  ]"
+                >
+                  غیرمجاز (Mute)
+                </button>
+              </div>
+            </div>
+
+            <!-- Simulated Attachment Insertions -->
+            <div class="flex flex-col gap-1.5">
+              <Label class="text-[9.5px] text-muted-foreground">شبیه‌سازی آپلود پیوست:</Label>
+              <div class="grid grid-cols-2 gap-1.5">
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  @click="simulateAddAttachment('image')"
+                  class="text-[10px] font-semibold py-1 h-7.5 cursor-pointer"
+                >
+                  افزودن تصویر
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  @click="simulateAddAttachment('video')"
+                  class="text-[10px] font-semibold py-1 h-7.5 cursor-pointer"
+                >
+                  افزودن ویدیو
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  @click="simulateAddAttachment('audio')"
+                  class="text-[10px] font-semibold py-1 h-7.5 cursor-pointer"
+                >
+                  افزودن صوت/صدا
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  @click="simulateAddAttachment('file')"
+                  class="text-[10px] font-semibold py-1 h-7.5 cursor-pointer"
+                >
+                  افزودن سند/فایل
+                </Button>
+              </div>
+            </div>
+
+            <!-- Quick Text templates -->
+            <div class="flex flex-col gap-1.5 mt-1">
+              <Label class="text-[9.5px] text-muted-foreground">پر کردن متن قالب:</Label>
+              <div class="flex flex-col gap-1">
+                <button 
+                  @click="simulatorInputText = 'این یک متن تستی طولانی برای بررسی تغییر ارتفاع فیلد متنی است. با نوشتن سطرهای بیشتر، ورودی پیام به صورت عمودی بزرگتر می‌شود.'; logEvent('Input: Filled template text', {})"
+                  class="w-full text-right px-2 py-1 text-[9px] font-semibold rounded border border-border/40 hover:bg-muted/40 transition-colors truncate cursor-pointer bg-background/20 text-foreground"
+                >
+                  قالب متن طولانی
+                </button>
+                <button 
+                  @click="simulatorInputText = ''; simulatorInputAttachments = []; logEvent('Input: Cleared everything', {})"
+                  class="w-full text-right px-2 py-1 text-[9px] font-semibold rounded border border-destructive/20 hover:bg-destructive/5 text-destructive transition-colors cursor-pointer bg-background/20"
+                >
+                  پاک کردن همه داده‌ها
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1228,6 +1568,61 @@ const resetPosts = () => {
                       @add-comment="handlePostCommentAdded"
                     />
                   </div>
+                </div>
+
+                <!-- CreateTopicModal Preview -->
+                <div 
+                  v-else-if="currentComponent === 'create-topic-modal'"
+                  class="w-full flex flex-col items-center justify-center py-10"
+                  dir="rtl"
+                >
+                  <Button @click="simulatorIsModalOpen = true" class="cursor-pointer flex items-center" data-icon="inline-start">
+                    <PlusIcon />
+                    کلیک کنید تا مودال ساخت تاپیک باز شود
+                  </Button>
+                  
+                  <p class="text-[10px] text-muted-foreground text-center mt-3 max-w-xs leading-relaxed">
+                    با کلیک بر روی دکمه بالا، مودال ایجاد گفتگو باز می‌شود. رویدادهای «ایجاد» و «انصراف» در کنسول پایین ثبت خواهند شد.
+                  </p>
+                  
+                  <CreateTopicModal
+                    :isOpen="simulatorIsModalOpen"
+                    @close="handleModalClose"
+                    @create="handleModalCreate"
+                  />
+                </div>
+
+                <!-- BotConnectionCard Preview -->
+                <div 
+                  v-else-if="currentComponent === 'bot-connection'"
+                  class="w-full flex flex-col items-center py-4 px-2"
+                  dir="rtl"
+                >
+                  <BotConnectionCard
+                    :platform="simulatorBotPlatform"
+                    :initialStatus="simulatorBotStatus"
+                    :initialToken="simulatorBotToken"
+                    @connect="handleBotConnect"
+                    @disconnect="handleBotDisconnect"
+                    @edit="handleBotEdit"
+                    @update:status="(st) => { simulatorBotStatus = st }"
+                  />
+                </div>
+
+                <!-- TopicMessageInput Preview -->
+                <div 
+                  v-else-if="currentComponent === 'topic-input'"
+                  class="w-full flex flex-col items-center py-4 px-2"
+                  dir="rtl"
+                >
+                  <TopicMessageInput
+                    :placeholder="simulatorInputPlaceholder"
+                    :disabled="simulatorInputDisabled"
+                    :initialText="simulatorInputText"
+                    :initialAttachments="simulatorInputAttachments"
+                    @send="handleInputSend"
+                    @removeAttachment="handleInputRemoveAttachment"
+                  />
                 </div>
 
               </div>

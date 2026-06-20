@@ -3,8 +3,7 @@ import { ConfigProvider } from 'reka-ui'
 import { useDark, useToggle } from '@vueuse/core'
 import { 
   SunIcon, 
-  MoonIcon, 
-  MonitorIcon
+  MoonIcon,
 } from '@lucide/vue'
 
 // Dark/Light theme manager via VueUse
@@ -19,43 +18,43 @@ const toggleDark = useToggle(isDark)
 
 <template>
   <ConfigProvider dir="rtl">
-    <div class="min-h-screen bg-background text-foreground font-sans transition-colors duration-300 flex flex-col" dir="rtl">
+    <div class="min-h-screen bg-background text-foreground font-sans transition-colors duration-300 flex flex-col relative" dir="rtl">
       
-      <!-- Main Platform Header -->
-      <header class="sticky top-0 z-50 w-full border-b border-border/80 bg-background/80 backdrop-blur-md flex justify-center">
-        <div class="w-full max-w-6xl px-6 h-16 flex items-center justify-between">
-          
-          <!-- Logo & Brand -->
-          <div class="flex items-center gap-2">
-            <div class="size-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground shadow-sm">
-              <MonitorIcon class="size-4" />
-            </div>
-            <div>
-              <span class="font-extrabold tracking-tight text-sm">محصول اصلی AVA</span>
-              <span class="text-[9px] block text-muted-foreground mt-0.5 leading-none">محیط تولید و توسعه اصلی</span>
-            </div>
-          </div>
-
-          <!-- Utilities (Theme Switcher) -->
-          <div class="flex items-center gap-2">
-            <button 
-              @click="toggleDark()" 
-              class="size-8 rounded-lg border border-border/80 bg-background flex items-center justify-center hover:bg-muted transition-colors shadow-sm outline-none cursor-pointer"
-              title="تغییر تم"
-            >
-              <SunIcon v-if="isDark" class="size-4 text-amber-500" />
-              <MoonIcon v-else class="size-4 text-primary" />
-            </button>
-          </div>
-
-        </div>
-      </header>
-
       <!-- Main Application Container -->
-      <main class="flex-1 w-full bg-linear-to-b from-background via-card/10 to-muted/20">
-        <router-view />
+      <main class="w-full flex-1 flex flex-col items-center p-4 sm:p-6">
+        <router-view v-slot="{ Component }">
+          <transition 
+            name="fade" 
+            mode="out-in"
+          >
+            <component :is="Component" />
+          </transition>
+        </router-view>
       </main>
+
+      <!-- Floating Dark Mode Toggle (Bottom Left Corner) -->
+      <button 
+        @click="toggleDark()" 
+        class="fixed bottom-6 left-6 z-50 size-10 rounded-full border border-border/80 bg-background/80 backdrop-blur-xs flex items-center justify-center hover:bg-muted/80 hover:scale-105 active:scale-95 transition-all shadow-md outline-none cursor-pointer"
+        title="تغییر تم"
+      >
+        <SunIcon v-if="isDark" class="size-5 text-amber-500" />
+        <MoonIcon v-else class="size-5 text-primary" />
+      </button>
 
     </div>
   </ConfigProvider>
 </template>
+
+<style>
+/* Smooth fade transitions for page swaps */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
