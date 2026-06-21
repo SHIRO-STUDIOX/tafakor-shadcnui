@@ -131,7 +131,7 @@ const handleAttachClick = () => {
     >
       <div class="bg-card/90 border border-border/80 rounded-lg px-4 py-2.5 flex items-center gap-2 shadow-sm">
         <AlertCircleIcon class="size-4 text-muted-foreground" />
-        <span class="text-[11px] font-bold text-muted-foreground">شما اجازه ارسال پیام در این گفتگو را ندارید.</span>
+        <span class="text-[11px] font-bold text-muted-foreground">شما اجازه ارسال پیام در این تاپیک را ندارید.</span>
       </div>
     </div>
 

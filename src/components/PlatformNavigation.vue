@@ -21,10 +21,10 @@ const selectTab = (tab: 'home' | 'profile') => {
     <button
       @click="selectTab('home')"
       :class="[
-        'px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-95 cursor-pointer border',
+        'px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-95 cursor-pointer border border-transparent',
         activeTab === 'home'
-          ? 'bg-primary/10 text-primary border-primary/20 font-bold shadow-xs'
-          : 'bg-transparent text-muted-foreground border-transparent hover:text-foreground hover:bg-muted/40'
+          ? 'bg-primary/10 text-primary font-bold shadow-xs'
+          : 'bg-transparent text-muted-foreground hover:text-foreground hover:bg-muted/40'
       ]"
       title="خانه"
     >
@@ -36,10 +36,10 @@ const selectTab = (tab: 'home' | 'profile') => {
     <button
       @click="selectTab('profile')"
       :class="[
-        'px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-95 cursor-pointer border',
+        'px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-95 cursor-pointer border border-transparent',
         activeTab === 'profile'
-          ? 'bg-primary/10 text-primary border-primary/20 font-bold shadow-xs'
-          : 'bg-transparent text-muted-foreground border-transparent hover:text-foreground hover:bg-muted/40'
+          ? 'bg-primary/10 text-primary font-bold shadow-xs'
+          : 'bg-transparent text-muted-foreground hover:text-foreground hover:bg-muted/40'
       ]"
       title="پروفایل"
     >

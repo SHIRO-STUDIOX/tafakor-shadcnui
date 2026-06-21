@@ -77,7 +77,7 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
+  --background: oklch(0.985 0.012 120);
   --foreground: oklch(0.153 0.006 107.1);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.153 0.006 107.1);
@@ -100,7 +100,7 @@
   --chart-3: oklch(0.466 0.025 107.3);
   --chart-4: oklch(0.394 0.023 107.4);
   --chart-5: oklch(0.286 0.016 107.4);
-  --radius: 0.625rem;
+  --radius: 1rem;
   --sidebar: oklch(0.988 0.003 106.5);
   --sidebar-foreground: oklch(0.153 0.006 107.1);
   --sidebar-primary: oklch(0.228 0.013 107.4);
@@ -157,6 +157,20 @@
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "ss01", "cv11";
     font-variation-settings: "dots" 3;
+    transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+  }
+
+  /* Smooth theme transitions for typical components */
+  .bg-background,
+  .bg-card,
+  .bg-muted,
+  .border-border,
+  .border,
+  .text-foreground,
+  .text-muted-foreground,
+  .text-primary,
+  .bg-primary {
+    transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
   }
 
   /* تنظیمات کلاس‌های وزن فونت متغیر ایران یکان ایکس همراه با اتصال نقطه‌ها */

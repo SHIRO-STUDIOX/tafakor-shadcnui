@@ -30,7 +30,7 @@ const avatarPlaceholder = computed(() => {
 <template>
   <div
     @click="emit('click')"
-    class="w-full flex items-center gap-3.5 p-3 rounded-xl hover:bg-muted/40 transition-all duration-200 cursor-pointer select-none text-right border-0 group relative"
+    class="w-full flex items-center gap-3.5 p-3 rounded-2xl hover:bg-muted/40 transition-all duration-200 cursor-pointer select-none text-right border-0 group relative"
     dir="rtl"
   >
     <!-- Avatar / Image (RTL: right side) -->
@@ -38,12 +38,12 @@ const avatarPlaceholder = computed(() => {
       <img
         v-if="image"
         :src="image"
-        class="size-11 rounded-xl object-cover bg-muted border border-border/10 shadow-xs"
+        class="size-11 rounded-2xl object-cover bg-muted border border-border/10 shadow-xs"
         alt="Avatar"
       />
       <div
         v-else
-        class="size-11 rounded-xl bg-primary/10 border border-primary/20 text-primary text-sm font-extrabold flex items-center justify-center select-none"
+        class="size-11 rounded-2xl bg-primary/10 border border-primary/20 text-primary text-sm font-extrabold flex items-center justify-center select-none"
       >
         {{ avatarPlaceholder }}
       </div>
@@ -88,7 +88,7 @@ const avatarPlaceholder = computed(() => {
     <!-- Left Section (Time, Unread Count Badge) -->
     <div class="flex flex-col items-end shrink-0 gap-2">
       <!-- Time Stamp -->
-      <span class="text-[9px] text-muted-foreground font-mono select-none">
+      <span class="text-[10px] text-muted-foreground font-bold select-none">
         {{ time }}
       </span>
 

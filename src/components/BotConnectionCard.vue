@@ -105,7 +105,7 @@ const toggleGuide = () => {
 
 <template>
   <div 
-    class="w-full bg-card/45 backdrop-blur-md border border-border/40 rounded-xl p-5 md:p-6 flex flex-col gap-5 select-none shadow-xs transition-all duration-300 relative overflow-hidden"
+    class="w-full bg-card/45 backdrop-blur-md border border-border/40 rounded-3xl p-5 md:p-6 flex flex-col gap-5 select-none shadow-xs transition-all duration-300 relative overflow-hidden"
     dir="rtl"
   >
     <!-- Background subtle tint decoration -->
@@ -122,7 +122,7 @@ const toggleGuide = () => {
         <!-- Logo Indicator -->
         <div 
           :class="[
-            'size-9 rounded-lg flex items-center justify-center text-white font-black text-xs shadow-xs',
+            'size-9 rounded-xl flex items-center justify-center text-white font-black text-xs shadow-xs',
             props.platform === 'telegram' ? 'bg-sky-500' : 'bg-emerald-500'
           ]"
         >
@@ -151,22 +151,6 @@ const toggleGuide = () => {
         >
           <RefreshCwIcon class="animate-spin" data-icon="inline-start" />
           در حال اتصال...
-        </Badge>
-        <Badge 
-          v-else-if="isConflict" 
-          variant="secondary" 
-          class="bg-destructive/10 border-destructive/20 text-destructive text-[9px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1.5"
-        >
-          <XCircleIcon data-icon="inline-start" />
-          تداخل اتصال
-        </Badge>
-        <Badge 
-          v-else 
-          variant="secondary" 
-          class="bg-muted border border-border/50 text-muted-foreground text-[9px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1.5"
-        >
-          <span class="size-1.5 rounded-full bg-muted-foreground/60" />
-          غیرمتصل
         </Badge>
       </transition>
     </div>
@@ -206,7 +190,7 @@ const toggleGuide = () => {
     <!-- Form Section -->
     <div class="form-group-layout z-10">
       <!-- Connected State view -->
-      <div v-if="isConnected" class="flex flex-col gap-3 bg-background/30 border border-border/40 p-4 rounded-xl">
+      <div v-if="isConnected" class="flex flex-col gap-3 bg-background/30 border border-border/40 p-4 rounded-2xl">
         <div class="flex flex-col gap-1 text-right">
           <Label class="text-[10px] text-muted-foreground font-semibold">توکن ربات فعال:</Label>
           <code class="text-xs font-mono font-bold tracking-wider text-foreground/80 break-all select-all mt-1 select-none">
@@ -280,7 +264,7 @@ const toggleGuide = () => {
         <transition name="guide-slide">
           <div 
             v-if="showGuide" 
-            class="bg-muted/40 border border-border/40 rounded-xl p-4 text-[10.5px] text-muted-foreground leading-relaxed flex flex-col gap-2.5 text-right"
+            class="bg-muted/40 border border-border/40 rounded-2xl p-4 text-[10.5px] text-muted-foreground leading-relaxed flex flex-col gap-2.5 text-right"
           >
             <h4 class="font-extrabold text-foreground text-[11px] border-r-2 border-primary pr-1.5 leading-none mb-1">
               مراحل دریافت توکن در {{ platformName }}

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, reactive, watch, onBeforeUnmount } from 'vue'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -36,6 +36,12 @@ export interface PostAuthor {
   role?: string
 }
 
+export interface PostReaction {
+  emoji: string
+  count: number
+  reacted: boolean
+}
+
 interface Props {
   id: string | number
   author: PostAuthor
@@ -48,18 +54,25 @@ interface Props {
   likesCount?: number
   comments?: Comment[]
   liked?: boolean
+  reactions?: PostReaction[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
   likesCount: 0,
   comments: () => [],
-  liked: false
+  liked: false,
+  reactions: () => []
 })
 
 const emit = defineEmits<{
   (e: 'like', id: string | number, newState: boolean): void
   (e: 'share', id: string | number): void
   (e: 'add-comment', postId: string | number, comment: Comment): void
+  (e: 'edit', id: string | number): void
+  (e: 'delete', id: string | number): void
+  (e: 'pin', id: string | number): void
+  (e: 'react', id: string | number, emoji: string, currentReactions: PostReaction[]): void
+  (e: 'copy', id: string | number): void
 }>()
 
 // Helper for Farsi digits
@@ -74,11 +87,157 @@ const localLikesCount = ref(props.likesCount)
 const showComments = ref(false)
 const localComments = ref<Comment[]>([...props.comments])
 const newCommentText = ref('')
+const localReactions = ref<PostReaction[]>([...props.reactions])
 
 // Synchronize props changes
 watch(() => props.liked, (newVal) => { isLiked.value = newVal })
 watch(() => props.likesCount, (newVal) => { localLikesCount.value = newVal })
 watch(() => props.comments, (newVal) => { localComments.value = [...newVal] })
+watch(() => props.reactions, (newVal) => { localReactions.value = [...newVal] })
+
+// PostContextMenu State and Logic
+import PostContextMenu from './PostContextMenu.vue'
+
+const cardRef = ref<HTMLElement | null>(null)
+const triggerRect = ref<DOMRect | null>(null)
+const isContextMenuOpen = ref(false)
+
+const isInteractiveElement = (target: HTMLElement) => {
+  let el: HTMLElement | null = target
+  while (el && el !== cardRef.value) {
+    const tagName = el.tagName.toLowerCase()
+    if (
+      tagName === 'button' || 
+      tagName === 'input' || 
+      tagName === 'textarea' || 
+      tagName === 'audio' || 
+      tagName === 'video' ||
+      tagName === 'a' ||
+      el.getAttribute('role') === 'button' ||
+      el.classList.contains('cursor-pointer') ||
+      el.classList.contains('clickable') ||
+      tagName === 'select' ||
+      tagName === 'option'
+    ) {
+      return true
+    }
+    el = el.parentElement
+  }
+  return false
+}
+
+let longPressTimer: any = null
+let isLongPressTriggered = false
+let startX = 0
+let startY = 0
+
+const startLongPress = (clientX: number, clientY: number) => {
+  isLongPressTriggered = false
+  startX = clientX
+  startY = clientY
+  
+  if (longPressTimer) clearTimeout(longPressTimer)
+  
+  longPressTimer = setTimeout(() => {
+    isLongPressTriggered = true
+    openContextMenu()
+  }, 500)
+}
+
+const cancelLongPress = () => {
+  if (longPressTimer) {
+    clearTimeout(longPressTimer)
+    longPressTimer = null
+  }
+}
+
+const handleMouseDown = (e: MouseEvent) => {
+  if (e.button !== 0) return // Only left click
+  if (isInteractiveElement(e.target as HTMLElement)) return
+  startLongPress(e.clientX, e.clientY)
+}
+
+const handleMouseUp = () => {
+  cancelLongPress()
+}
+
+const handleMouseLeave = () => {
+  cancelLongPress()
+}
+
+const handleTouchStart = (e: TouchEvent) => {
+  if (isInteractiveElement(e.target as HTMLElement)) return
+  const touch = e.touches[0]
+  if (touch) {
+    startLongPress(touch.clientX, touch.clientY)
+  }
+}
+
+const handleTouchEnd = (e: TouchEvent) => {
+  cancelLongPress()
+  if (isLongPressTriggered) {
+    e.preventDefault()
+  }
+}
+
+const handleTouchMove = (e: TouchEvent) => {
+  const touch = e.touches[0]
+  if (touch) {
+    const diffX = Math.abs(touch.clientX - startX)
+    const diffY = Math.abs(touch.clientY - startY)
+    if (diffX > 10 || diffY > 10) {
+      cancelLongPress()
+    }
+  }
+}
+
+const handleContextMenu = (e: MouseEvent) => {
+  if (isInteractiveElement(e.target as HTMLElement)) return
+  e.preventDefault()
+  openContextMenu()
+}
+
+const openContextMenu = () => {
+  if (!cardRef.value) return
+  triggerRect.value = cardRef.value.getBoundingClientRect()
+  isContextMenuOpen.value = true
+  
+  if (navigator.vibrate) {
+    navigator.vibrate(50)
+  }
+}
+
+const handleThreeDotsClick = (e: MouseEvent) => {
+  e.stopPropagation()
+  openContextMenu()
+}
+
+const handleReact = (postId: string | number, emoji: string) => {
+  const existing = localReactions.value.find(r => r.emoji === emoji)
+  if (existing) {
+    if (existing.reacted) {
+      existing.count--
+      existing.reacted = false
+      if (existing.count <= 0) {
+        localReactions.value = localReactions.value.filter(r => r.emoji !== emoji)
+      }
+    } else {
+      existing.count++
+      existing.reacted = true
+    }
+  } else {
+    localReactions.value.push({
+      emoji,
+      count: 1,
+      reacted: true
+    })
+  }
+  emit('react', props.id, emoji, localReactions.value)
+}
+
+const handleReactionClick = (emoji: string) => {
+  handleReact(props.id, emoji)
+}
 
 // Action handlers
 const toggleLike = () => {
@@ -199,8 +358,16 @@ const formatTime = (timeInSeconds: number) => {
 
 <template>
   <div 
-    class="w-full bg-background/25 dark:bg-card/25 backdrop-blur-md border border-border rounded-xl shadow-none transition-all duration-300 flex flex-col overflow-hidden text-right select-none"
+    ref="cardRef"
+    class="w-full bg-background/25 dark:bg-card/25 backdrop-blur-md border border-border rounded-3xl shadow-none transition-all duration-300 flex flex-col overflow-hidden text-right select-none"
     dir="rtl"
+    @mousedown="handleMouseDown"
+    @mouseup="handleMouseUp"
+    @mouseleave="handleMouseLeave"
+    @touchstart="handleTouchStart"
+    @touchend="handleTouchEnd"
+    @touchmove="handleTouchMove"
+    @contextmenu.prevent="handleContextMenu"
   >
     <!-- Card Top Header -->
     <div class="px-5 py-4 flex items-center justify-between">
@@ -227,7 +394,12 @@ const formatTime = (timeInSeconds: number) => {
           <span>{{ toPersianDigits(timestamp) }}</span>
         </div>
         <!-- Options Menu (Simulated) -->
-        <Button variant="ghost" size="icon" class="size-7 rounded-full text-muted-foreground hover:text-foreground">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          class="size-7 rounded-full text-muted-foreground hover:text-foreground cursor-pointer"
+          @click="handleThreeDotsClick"
+        >
           <MoreVerticalIcon class="size-4" />
         </Button>
       </div>
@@ -238,7 +410,7 @@ const formatTime = (timeInSeconds: number) => {
       <!-- Post Text Content -->
       <p 
         v-if="content" 
-        class="text-[15px] leading-relaxed text-foreground font-semibold whitespace-pre-line"
+        class="text-sm font-medium leading-relaxed text-foreground/90 whitespace-pre-line"
       >
         {{ content }}
       </p>
@@ -247,7 +419,7 @@ const formatTime = (timeInSeconds: number) => {
       <!-- 1. IMAGE POST -->
       <div 
         v-if="type === 'image' && mediaUrl" 
-        class="relative w-full rounded-lg overflow-hidden shadow-xs group"
+        class="relative w-full rounded-2xl overflow-hidden shadow-xs group"
       >
         <img 
           :src="mediaUrl" 
@@ -265,7 +437,7 @@ const formatTime = (timeInSeconds: number) => {
       <!-- 2. VIDEO POST -->
       <div 
         v-else-if="type === 'video' && mediaUrl" 
-        class="relative w-full rounded-lg overflow-hidden shadow-xs bg-black/40 group"
+        class="relative w-full rounded-2xl overflow-hidden shadow-xs bg-black/40 group"
       >
         <video 
           ref="videoRef"
@@ -291,7 +463,7 @@ const formatTime = (timeInSeconds: number) => {
       <!-- 3. AUDIO POST (Highly customized glassmorphic audio player) -->
       <div 
         v-else-if="type === 'audio' && mediaUrl" 
-        class="w-full bg-white/5 dark:bg-black/10 rounded-lg p-4 flex flex-col gap-3"
+        class="w-full bg-white/5 dark:bg-black/10 rounded-2xl p-4 flex flex-col gap-3"
       >
         <audio 
           ref="audioRef"
@@ -318,7 +490,7 @@ const formatTime = (timeInSeconds: number) => {
                 <MusicIcon class="size-3 text-primary" />
                 فایل صوتی ضمیمه شده
               </span>
-              <span class="text-[9px] text-muted-foreground font-mono shrink-0">
+              <span class="text-[10px] text-muted-foreground font-bold shrink-0">
                 {{ formatTime(audioCurrentTime) }} / {{ formatTime(audioDuration || parseFloat(duration || '0')) }}
               </span>
             </div>
@@ -349,6 +521,28 @@ const formatTime = (timeInSeconds: number) => {
       </div>
     </div>
 
+    <!-- Active Reactions (Telegram Style) -->
+    <div 
+      v-if="localReactions.length > 0" 
+      class="px-5 pb-3 flex flex-wrap gap-1.5 justify-start"
+      dir="rtl"
+    >
+      <button
+        v-for="reaction in localReactions"
+        :key="reaction.emoji"
+        @click="handleReactionClick(reaction.emoji)"
+        :class="[
+          'px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer border',
+          reaction.reacted
+            ? 'bg-primary/10 border-primary/20 text-primary shadow-xs'
+            : 'bg-white/5 dark:bg-white/2 border-transparent text-muted-foreground hover:text-foreground hover:bg-white/10'
+        ]"
+      >
+        <span>{{ reaction.emoji }}</span>
+        <span class="text-[10px] font-bold">{{ toPersianDigits(reaction.count) }}</span>
+      </button>
+    </div>
+
     <!-- Card Footer Action Controls -->
     <div class="px-5 py-3 bg-white/2 dark:bg-black/2 flex items-center justify-between gap-4">
       <div class="flex items-center gap-2">
@@ -363,7 +557,7 @@ const formatTime = (timeInSeconds: number) => {
           ]"
         >
           <HeartIcon :class="['size-4 transition-transform duration-300', isLiked ? 'fill-destructive scale-110' : '']" />
-          <span class="font-mono text-[10px]">{{ toPersianDigits(localLikesCount) }}</span>
+          <span class="text-[11px] font-bold">{{ toPersianDigits(localLikesCount) }}</span>
         </button>
 
         <!-- Comments Action (Badge Toggle) -->
@@ -377,7 +571,7 @@ const formatTime = (timeInSeconds: number) => {
           ]"
         >
           <MessageCircleIcon class="size-4" />
-          <span class="font-mono text-[10px]">{{ toPersianDigits(localComments.length) }}</span>
+          <span class="text-[11px] font-bold">{{ toPersianDigits(localComments.length) }}</span>
           <Badge 
             v-if="localComments.length > 0" 
             variant="secondary" 
@@ -424,7 +618,7 @@ const formatTime = (timeInSeconds: number) => {
             </Avatar>
 
             <!-- Comment Content Box -->
-            <div class="flex-1 bg-white/5 dark:bg-black/15 rounded-lg px-3.5 py-2.5 flex flex-col gap-1">
+            <div class="flex-1 bg-white/5 dark:bg-black/15 rounded-2xl px-3.5 py-2.5 flex flex-col gap-1">
               <div class="flex justify-between items-center">
                 <span class="text-[11.5px] font-extrabold text-foreground">{{ comment.authorName }}</span>
                 <span class="text-[10px] text-muted-foreground font-semibold">{{ toPersianDigits(comment.timestamp) }}</span>
@@ -447,13 +641,13 @@ const formatTime = (timeInSeconds: number) => {
             <Input 
               v-model="newCommentText"
               placeholder="دیدگاه خود را بنویسید..." 
-              class="pr-3 pl-10 py-1.5 h-8.5 text-xs font-semibold rounded-lg bg-background/50 border-transparent focus-visible:ring-primary/30"
+              class="pr-3 pl-10 py-1.5 h-8.5 text-xs font-semibold rounded-xl bg-background/50 border-transparent focus-visible:ring-primary/30"
               @keydown.enter="submitComment"
             />
             <!-- Submit comment button inside input -->
             <button 
               @click="submitComment"
-              class="absolute left-1.5 size-6 rounded-md bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 active:scale-95 transition-all cursor-pointer"
+              class="absolute left-1.5 size-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 active:scale-95 transition-all cursor-pointer"
             >
               <SendIcon class="size-3" />
             </button>
@@ -462,6 +656,22 @@ const formatTime = (timeInSeconds: number) => {
       </div>
     </transition>
   </div>
+
+  <!-- Teleported Context Menu Overlay -->
+  <Teleport to="body">
+    <PostContextMenu
+      :isOpen="isContextMenuOpen"
+      :triggerRect="triggerRect"
+      :postId="id"
+      :postText="content"
+      @close="isContextMenuOpen = false"
+      @edit="emit('edit', id)"
+      @delete="emit('delete', id)"
+      @pin="emit('pin', id)"
+      @react="handleReact"
+      @copy="emit('copy', id)"
+    />
+  </Teleport>
 </template>
 
 <style scoped>

@@ -20,14 +20,17 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
     v-slot="slotProps"
     data-slot="checkbox"
     v-bind="forwarded"
-    :class="cn('bg-input/90 data-checked:bg-primary data-checked:text-primary-foreground dark:data-checked:bg-primary data-checked:border-primary border-transparent aria-invalid:aria-checked:border-primary aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 focus-visible:border-ring focus-visible:ring-ring/30 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 flex size-4 items-center justify-center rounded-[5px] border transition-shadow group-has-disabled/field:opacity-50 focus-visible:ring-3 aria-invalid:ring-3 peer relative shrink-0 outline-none after:absolute after:-inset-x-3 after:-inset-y-2 disabled:cursor-not-allowed disabled:opacity-50', props.class)"
+    :class="cn(
+      'peer h-4 w-4 shrink-0 rounded-md border border-border bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:border-primary data-[state=checked]:text-primary-foreground flex items-center justify-center transition-colors',
+      props.class
+    )"
   >
     <CheckboxIndicator
       data-slot="checkbox-indicator"
-      class="[&>svg]:size-3.5 grid place-content-center text-current transition-none"
+      class="flex items-center justify-center text-current"
     >
       <slot v-bind="slotProps">
-        <CheckIcon />
+        <CheckIcon class="size-3" />
       </slot>
     </CheckboxIndicator>
   </CheckboxRoot>

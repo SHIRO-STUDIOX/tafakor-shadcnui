@@ -5,13 +5,14 @@ import LoginCard from '@/components/LoginCard.vue'
 import PlatformHeader from '@/components/PlatformHeader.vue'
 import PlatformNavigation from '@/components/PlatformNavigation.vue'
 import TopicCard from '@/components/TopicCard.vue'
-import MinimalSearch from '@/components/MinimalSearch.vue'
 import ProfileOptionCard from '@/components/ProfileOptionCard.vue'
 import ProfileCard from '@/components/ProfileCard.vue'
-import PostCard from '@/components/PostCard.vue'
+import PostCard, { type PostReaction } from '@/components/PostCard.vue'
 import CreateTopicModal from '@/components/CreateTopicModal.vue'
 import BotConnectionCard from '@/components/BotConnectionCard.vue'
 import TopicMessageInput from '@/components/TopicMessageInput.vue'
+import TopicEditView from '@/components/TopicEditView.vue'
+import TopicConnectionsView from '@/components/TopicConnectionsView.vue'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -45,7 +46,7 @@ import {
 } from '@lucide/vue'
 
 // Simulator configs
-const currentComponent = ref<'profile' | 'login' | 'header' | 'nav' | 'topic' | 'search' | 'profile-option' | 'profile-card-header' | 'post' | 'create-topic-modal' | 'bot-connection' | 'topic-input'>('profile')
+const currentComponent = ref<'profile' | 'login' | 'header' | 'nav' | 'topic' | 'search' | 'profile-option' | 'profile-card-header' | 'post' | 'create-topic-modal' | 'bot-connection' | 'topic-input' | 'topic-edit' | 'topic-connections'>('profile')
 const viewportWidth = ref<'100%' | '768px' | '375px'>('100%')
 const sandboxBg = ref<'default' | 'gradient' | 'grid' | 'image'>('default')
 const activeState = ref<'idle' | 'loading' | 'error' | 'empty' | 'success'>('idle')
@@ -166,7 +167,7 @@ const availableStates = computed(() => {
   }
 })
 
-const handleComponentChange = (comp: 'profile' | 'login' | 'header' | 'nav' | 'topic' | 'search' | 'profile-option' | 'profile-card-header' | 'post' | 'create-topic-modal' | 'bot-connection' | 'topic-input') => {
+const handleComponentChange = (comp: 'profile' | 'login' | 'header' | 'nav' | 'topic' | 'search' | 'profile-option' | 'profile-card-header' | 'post' | 'create-topic-modal' | 'bot-connection' | 'topic-input' | 'topic-edit' | 'topic-connections') => {
   currentComponent.value = comp
   activeState.value = 'idle'
   logEvent('Component Changed', { component: comp })
@@ -287,6 +288,46 @@ const handleHeaderAction = (actionName: string) => {
   logEvent(`Header: Action Clicked [${actionName}]`, {})
 }
 
+const handleSimulatorEditTopic = () => {
+  const newTitle = prompt('ویرایش مشخصات تاپیک (نام تاپیک):', simulatorInnerTitle.value)
+  if (newTitle !== null && newTitle.trim()) {
+    simulatorInnerTitle.value = newTitle.trim()
+    logEvent('Header: Topic Edited', { newTitle: newTitle.trim() })
+  }
+}
+
+const handleSimulatorDeleteTopic = () => {
+  logEvent('Header: Topic Deleted', { topicTitle: simulatorInnerTitle.value })
+  simulatorIsInnerPage.value = false
+}
+
+const handleSimulatorTopicConnections = () => {
+  logEvent('Header: Topic Connections Settings Opened', { topicTitle: simulatorInnerTitle.value })
+  currentComponent.value = 'topic-connections'
+}
+
+// Simulator Topic Edit & Connections state variables
+const simulatorTelegramConnected = ref(true)
+const simulatorBaleConnected = ref(false)
+const simulatorTopicData = ref({
+  title: 'پشتیبانی فنی پلتفرم',
+  description: 'درخواست راهنمایی در مورد دیزاین سیستم پلتفرم',
+  image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
+  autoRepost: true,
+  selectedChannels: ['tg_1', 'bale_1']
+})
+
+const resetSimulatorTopicEdit = () => {
+  simulatorTopicData.value = {
+    title: 'پشتیبانی فنی پلتفرم',
+    description: 'درخواست راهنمایی در مورد دیزاین سیستم پلتفرم',
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
+    autoRepost: true,
+    selectedChannels: ['tg_1', 'bale_1']
+  }
+  logEvent('Topic: Simulator Data Reset', {})
+}
+
 // Platform Navigation simulation variables
 const simulatorActiveTab = ref<'home' | 'profile'>('home')
 
@@ -384,6 +425,7 @@ interface Post {
   likesCount: number
   liked: boolean
   comments: Comment[]
+  reactions?: PostReaction[]
 }
 
 const initialPosts: Post[] = [
@@ -402,6 +444,10 @@ const initialPosts: Post[] = [
     comments: [
       { id: 101, authorName: 'بابک رضایی', text: 'بسیار عالی و مینیمال شده، خسته نباشید!', timestamp: '۱۴:۳۵' },
       { id: 102, authorName: 'نسیم مرادی', text: 'آیا افکت بلور در پس‌زمینه‌های متحرک هم به خوبی کار می‌کند؟', timestamp: '۱۴:۴۰' }
+    ],
+    reactions: [
+      { emoji: '👍', count: 4, reacted: true },
+      { emoji: '❤️', count: 2, reacted: false }
     ]
   },
   {
@@ -419,6 +465,10 @@ const initialPosts: Post[] = [
     liked: false,
     comments: [
       { id: 201, authorName: 'سارا احمدی', text: 'رنگ‌هاش فوق‌العاده است، هماهنگی خوبی با حالت تیره داره.', timestamp: '۱۲:۲۰' }
+    ],
+    reactions: [
+      { emoji: '🔥', count: 8, reacted: true },
+      { emoji: '💯', count: 3, reacted: false }
     ]
   },
   {
@@ -435,7 +485,10 @@ const initialPosts: Post[] = [
     timestamp: '۱۰:۰۵ - ۲۷ خرداد ۱۴۰۵',
     likesCount: 9,
     liked: false,
-    comments: []
+    comments: [],
+    reactions: [
+      { emoji: '👀', count: 3, reacted: false }
+    ]
   },
   {
     id: 4,
@@ -453,6 +506,9 @@ const initialPosts: Post[] = [
     liked: true,
     comments: [
       { id: 401, authorName: 'علی کریمی', text: 'فایل صوتی کاملاً واضح بود. ممنون.', timestamp: '۰۹:۴۵' }
+    ],
+    reactions: [
+      { emoji: '👏', count: 5, reacted: false }
     ]
   }
 ]
@@ -481,6 +537,41 @@ const handlePostCommentAdded = (postId: number | string, comment: Comment) => {
   logEvent('Post: Comment Added', { postId, comment })
 }
 
+const handlePostReact = (postId: number | string, emoji: string, currentReactions: PostReaction[]) => {
+  const post = mockPosts.value.find(p => p.id === postId)
+  if (post) {
+    post.reactions = currentReactions
+  }
+  logEvent('Post: Reacted', { postId, emoji, currentReactions })
+}
+
+const handlePostEdit = (postId: number | string) => {
+  const post = mockPosts.value.find(p => p.id === postId)
+  if (post) {
+    const newContent = prompt('متن جدید پست را وارد کنید:', post.content || '')
+    if (newContent !== null) {
+      post.content = newContent
+      logEvent('Post: Edited', { postId, newContent })
+    }
+  }
+}
+
+const handlePostDelete = (postId: number | string) => {
+  const index = mockPosts.value.findIndex(p => p.id === postId)
+  if (index !== -1) {
+    mockPosts.value.splice(index, 1)
+    logEvent('Post: Deleted', { postId })
+  }
+}
+
+const handlePostPin = (postId: number | string) => {
+  logEvent('Post: Pinned', { postId })
+}
+
+const handlePostCopy = (postId: number | string) => {
+  logEvent('Post: Text Copied to Clipboard', { postId })
+}
+
 const simulateNewPost = () => {
   const newPost = {
     id: Date.now(),
@@ -494,7 +585,8 @@ const simulateNewPost = () => {
     timestamp: 'هم‌اکنون',
     likesCount: 0,
     liked: false,
-    comments: []
+    comments: [],
+    reactions: []
   }
   mockPosts.value.unshift(newPost)
   logEvent('Post: Simulated New Post Received', newPost)
@@ -625,7 +717,7 @@ const resetPosts = () => {
               >
                 <span class="flex items-center gap-2">
                   <SearchIcon class="size-3.5" />
-                  جستجوی مینیمال (سرچ عریض)
+                  جستجوی ادغام‌شده در هدر
                 </span>
                 <CheckCircle2Icon v-if="currentComponent === 'search'" class="size-3.5 text-primary" />
               </button>
@@ -718,6 +810,36 @@ const resetPosts = () => {
                   ورودی پیام تایپک (جدید)
                 </span>
                 <CheckCircle2Icon v-if="currentComponent === 'topic-input'" class="size-3.5 text-primary" />
+              </button>
+              <button 
+                @click="handleComponentChange('topic-edit')"
+                :class="[
+                  'w-full text-right px-3 py-2.5 text-xs font-medium rounded-lg border transition-all flex items-center justify-between cursor-pointer',
+                  currentComponent === 'topic-edit' 
+                    ? 'bg-primary/5 text-primary border-primary/30 font-bold' 
+                    : 'bg-background/20 border-border/40 text-foreground hover:bg-muted/40'
+                ]"
+              >
+                <span class="flex items-center gap-2">
+                  <PencilIcon class="size-3.5 text-primary" />
+                  صفحه ویرایش تاپیک (جدید)
+                </span>
+                <CheckCircle2Icon v-if="currentComponent === 'topic-edit'" class="size-3.5 text-primary" />
+              </button>
+              <button 
+                @click="handleComponentChange('topic-connections')"
+                :class="[
+                  'w-full text-right px-3 py-2.5 text-xs font-medium rounded-lg border transition-all flex items-center justify-between cursor-pointer',
+                  currentComponent === 'topic-connections' 
+                    ? 'bg-primary/5 text-primary border-primary/30 font-bold' 
+                    : 'bg-background/20 border-border/40 text-foreground hover:bg-muted/40'
+                ]"
+              >
+                <span class="flex items-center gap-2">
+                  <LinkIcon class="size-3.5 text-primary" />
+                  اتصالات اختصاصی تاپیک (جدید)
+                </span>
+                <CheckCircle2Icon v-if="currentComponent === 'topic-connections'" class="size-3.5 text-primary" />
               </button>
             </div>
           </div>
@@ -1133,6 +1255,83 @@ const resetPosts = () => {
             </div>
           </div>
 
+          <!-- Topic Edit Specific Controls -->
+          <div v-if="currentComponent === 'topic-edit'" class="flex flex-col gap-3 border-t border-border/40 pt-4 mt-1">
+            <Label class="text-[11px] font-semibold text-muted-foreground block">تنظیمات شبیه‌ساز ویرایش تاپیک:</Label>
+            <p class="text-[9.5px] text-muted-foreground leading-relaxed">
+              با استفاده از فرم روبرو می‌توانید عنوان، توضیحات و تصویر تاپیک شبیه‌سازی شده را ویرایش کرده و ذخیره کنید. دکمه زیر مقادیر را ریست می‌کند:
+            </p>
+            <Button 
+              size="sm" 
+              variant="outline"
+              @click="resetSimulatorTopicEdit"
+              class="w-full text-xs font-semibold cursor-pointer"
+            >
+              بازنشانی مقادیر اولیه تاپیک
+            </Button>
+          </div>
+
+          <!-- Topic Connections Specific Controls -->
+          <div v-if="currentComponent === 'topic-connections'" class="flex flex-col gap-3 border-t border-border/40 pt-4 mt-1">
+            <Label class="text-[11px] font-semibold text-muted-foreground block">تنظیمات شبیه‌ساز اتصالات:</Label>
+            
+            <div class="flex flex-col gap-1.5">
+              <Label class="text-[9.5px] text-muted-foreground">وضعیت اتصال ربات تلگرام:</Label>
+              <div class="grid grid-cols-2 gap-1 bg-muted/65 p-1 rounded-lg border border-border/40">
+                <button 
+                  @click="simulatorTelegramConnected = true; logEvent('Connections: Telegram Connected', {})"
+                  :class="[
+                    'py-1 rounded text-[9px] font-bold transition-all cursor-pointer outline-none border border-transparent',
+                    simulatorTelegramConnected 
+                      ? 'bg-background text-foreground shadow-xs font-black' 
+                      : 'text-muted-foreground hover:text-foreground'
+                  ]"
+                >
+                  متصل
+                </button>
+                <button 
+                  @click="simulatorTelegramConnected = false; logEvent('Connections: Telegram Disconnected', {})"
+                  :class="[
+                    'py-1 rounded text-[9px] font-bold transition-all cursor-pointer outline-none border border-transparent',
+                    !simulatorTelegramConnected 
+                      ? 'bg-background text-foreground shadow-xs font-black' 
+                      : 'text-muted-foreground hover:text-foreground'
+                  ]"
+                >
+                  قطع اتصال
+                </button>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <Label class="text-[9.5px] text-muted-foreground">وضعیت اتصال ربات بله:</Label>
+              <div class="grid grid-cols-2 gap-1 bg-muted/65 p-1 rounded-lg border border-border/40">
+                <button 
+                  @click="simulatorBaleConnected = true; logEvent('Connections: Bale Connected', {})"
+                  :class="[
+                    'py-1 rounded text-[9px] font-bold transition-all cursor-pointer outline-none border border-transparent',
+                    simulatorBaleConnected 
+                      ? 'bg-background text-foreground shadow-xs font-black' 
+                      : 'text-muted-foreground hover:text-foreground'
+                  ]"
+                >
+                  متصل
+                </button>
+                <button 
+                  @click="simulatorBaleConnected = false; logEvent('Connections: Bale Disconnected', {})"
+                  :class="[
+                    'py-1 rounded text-[9px] font-bold transition-all cursor-pointer outline-none border border-transparent',
+                    !simulatorBaleConnected 
+                      ? 'bg-background text-foreground shadow-xs font-black' 
+                      : 'text-muted-foreground hover:text-foreground'
+                  ]"
+                >
+                  قطع اتصال
+                </button>
+              </div>
+            </div>
+          </div>
+
           <!-- Topic Message Input Specific Controls -->
           <div v-if="currentComponent === 'topic-input'" class="flex flex-col gap-3 border-t border-border/40 pt-4 mt-1">
             <Label class="text-[11px] font-semibold text-muted-foreground block">تنظیمات ورودی پیام تایپک:</Label>
@@ -1288,6 +1487,9 @@ const resetPosts = () => {
                       :error="activeState === 'error'"
                       @back="handleHeaderBack"
                       @actionClick="handleHeaderAction"
+                      @edit-topic="handleSimulatorEditTopic"
+                      @delete-topic="handleSimulatorDeleteTopic"
+                      @topic-connections="handleSimulatorTopicConnections"
                     />
                   </div>
                   
@@ -1305,7 +1507,7 @@ const resetPosts = () => {
 
                       <div v-if="!simulatorIsInnerPage" class="flex flex-col gap-2.5">
                         <p class="text-[11px] text-muted-foreground leading-relaxed">
-                          این شبیه‌سازی وضعیت صفحه اصلی برنامه است. با کلیک بر روی هر یک از گفتگوهای آزمایشی زیر، وارد صفحه چت شده و انیمیشن جدا شدن و فاصله‌گیری ۴ پیکسلی دکمه بازگشت از بدنه اصلی هدر را مشاهده خواهید کرد:
+                          این شبیه‌سازی وضعیت صفحه اصلی برنامه است. با کلیک بر روی هر یک از تاپیک‌های آزمایشی زیر، وارد صفحه چت شده و انیمیشن جدا شدن و فاصله‌گیری ۴ پیکسلی دکمه بازگشت از بدنه اصلی هدر را مشاهده خواهید کرد:
                         </p>
                         
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-1">
@@ -1328,7 +1530,7 @@ const resetPosts = () => {
 
                       <div v-else class="flex flex-col gap-3">
                         <p class="text-[11px] text-muted-foreground leading-relaxed">
-                          شما هم‌اکنون در صفحه گفتگو با <code class="bg-muted px-1.5 py-0.5 rounded font-bold text-primary">{{ simulatorInnerTitle }}</code> هستید. هدر به صورت خودکار تغییر سایز داده و دکمه بازگشت در سمت راست جدا شده است. برای بازگشت به صفحه اصلی، روی دکمه بازگشت (فلش راست) در هدر کلیک کنید یا دکمه شبیه‌ساز زیر را بزنید:
+                          شما هم‌اکنون در صفحه تاپیک <code class="bg-muted px-1.5 py-0.5 rounded font-bold text-primary">{{ simulatorInnerTitle }}</code> هستید. هدر به صورت خودکار تغییر سایز داده و دکمه بازگشت در سمت راست جدا شده است. برای بازگشت به صفحه اصلی، روی دکمه بازگشت (فلش راست) در هدر کلیک کنید یا دکمه شبیه‌ساز زیر را بزنید:
                         </p>
                         
                         <div class="self-start mt-1">
@@ -1390,7 +1592,7 @@ const resetPosts = () => {
                   dir="rtl"
                 >
                   <div class="flex items-center justify-between border-b border-border/40 pb-3 mb-1 px-1">
-                    <h3 class="text-xs font-extrabold text-foreground">گفتگوهای فعال</h3>
+                    <h3 class="text-xs font-extrabold text-foreground">تاپیک‌های فعال</h3>
                     <Badge variant="secondary" class="text-[9px] px-2 py-0.5 border border-border/50 text-muted-foreground font-mono">Telegram Style</Badge>
                   </div>
 
@@ -1410,7 +1612,7 @@ const resetPosts = () => {
                   </div>
                 </div>
 
-                <!-- MinimalSearch Preview Section -->
+                <!-- Platform Header Search Preview Section -->
                 <div 
                   v-else-if="currentComponent === 'search'"
                   class="w-full flex flex-col gap-6"
@@ -1420,34 +1622,24 @@ const resetPosts = () => {
                   <div class="w-full bg-card/45 border border-border/40 rounded-xl p-5 flex flex-col gap-4 text-right">
                     <div class="border-b border-border/40 pb-2 flex items-center justify-between">
                       <div>
-                        <h3 class="text-xs font-extrabold text-foreground">جستجو و فیلتر گفتگوها</h3>
-                        <p class="text-[9.5px] text-muted-foreground mt-1">با تایپ کردن در فیلد زیر، نتایج به صورت آنی فیلتر می‌شوند.</p>
+                        <h3 class="text-xs font-extrabold text-foreground">جستجوی ادغام‌شده در هدر</h3>
+                        <p class="text-[9.5px] text-muted-foreground mt-1">با کلیک روی آیکون جستجو در سمت چپ هدر، نوار جستجو فعال می‌شود و فیلترینگ به صورت زنده انجام می‌گردد.</p>
                       </div>
-                      <Badge variant="outline" class="text-[9px] border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 font-bold">زنده / تعاملی</Badge>
+                      <Badge variant="outline" class="text-[9px] border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 font-bold">جدید / ادغام‌شده</Badge>
                     </div>
 
-                    <!-- Clean Always-Open Search Input -->
+                    <!-- Interactive Demo using PlatformHeader -->
                     <div class="w-full py-2 flex flex-col gap-4">
                       <div class="flex flex-col gap-1.5">
-                        <span class="text-[10px] font-bold text-muted-foreground">حالت پیش‌فرض (همیشه باز):</span>
-                        <MinimalSearch 
-                          v-model="simulatorSearchQuery"
-                          @search="(q) => handleSearchEvent('SubmitQuery', { query: q })"
-                          @clear="handleSearchEvent('Clear', {})"
-                        />
-                      </div>
-
-                      <div class="flex flex-col gap-1.5">
-                        <div class="flex items-center justify-between">
-                          <span class="text-[10px] font-bold text-muted-foreground">حالت کم‌جا (Compact - لمس برای باز کردن مدال):</span>
-                          <span class="text-[9px] text-muted-foreground/60">(این دکمه را لمس کنید تا مودال جستجو باز شود)</span>
-                        </div>
-                        <div class="flex justify-end w-full">
-                          <MinimalSearch 
-                            compact
-                            v-model="simulatorSearchQuery"
-                            @search="(q) => handleSearchEvent('SubmitQuery', { query: q })"
-                            @clear="handleSearchEvent('Clear', {})"
+                        <span class="text-[10px] font-bold text-muted-foreground">پیش‌نمایش تعاملی هدر:</span>
+                        <div class="w-full border border-border/60 rounded-2xl p-2.5 bg-background/40 backdrop-blur-md">
+                          <PlatformHeader
+                            :isInnerPage="false"
+                            :showSearchButton="true"
+                            v-model:searchQuery="simulatorSearchQuery"
+                            :loading="activeState === 'loading'"
+                            :error="activeState === 'error'"
+                            @actionClick="(action) => logEvent('HeaderAction', { action })"
                           />
                         </div>
                       </div>
@@ -1462,7 +1654,7 @@ const resetPosts = () => {
 
                       <div class="flex flex-col gap-1.5 bg-background/20 border border-border/40 rounded-xl p-2 min-h-24">
                         <div v-if="filteredTopics.length === 0" class="text-center py-8 text-[10px] text-muted-foreground">
-                          هیچ گفتگویی با کلمه «{{ simulatorSearchQuery }}» یافت نشد.
+                          هیچ تاپیکی با کلمه «{{ simulatorSearchQuery }}» یافت نشد.
                         </div>
                         <transition-group name="list-fade" v-else>
                           <TopicCard
@@ -1581,9 +1773,15 @@ const resetPosts = () => {
                       :likesCount="post.likesCount"
                       :comments="post.comments"
                       :liked="post.liked"
+                      :reactions="post.reactions || []"
                       @like="handlePostLike"
                       @share="handlePostShare"
                       @add-comment="handlePostCommentAdded"
+                      @react="handlePostReact"
+                      @edit="handlePostEdit"
+                      @delete="handlePostDelete"
+                      @pin="handlePostPin"
+                      @copy="handlePostCopy"
                     />
                   </div>
                 </div>
@@ -1600,7 +1798,7 @@ const resetPosts = () => {
                   </Button>
                   
                   <p class="text-[10px] text-muted-foreground text-center mt-3 max-w-xs leading-relaxed">
-                    با کلیک بر روی دکمه بالا، مودال ایجاد گفتگو باز می‌شود. رویدادهای «ایجاد» و «انصراف» در کنسول پایین ثبت خواهند شد.
+                    با کلیک بر روی دکمه بالا، مودال ایجاد تاپیک باز می‌شود. رویدادهای «ایجاد» و «انصراف» در کنسول پایین ثبت خواهند شد.
                   </p>
                   
                   <CreateTopicModal
@@ -1640,6 +1838,44 @@ const resetPosts = () => {
                     :initialAttachments="simulatorInputAttachments"
                     @send="handleInputSend"
                     @removeAttachment="handleInputRemoveAttachment"
+                  />
+                </div>
+
+                <!-- TopicEditView Preview -->
+                <div 
+                  v-else-if="currentComponent === 'topic-edit'"
+                  class="w-full flex flex-col"
+                  dir="rtl"
+                >
+                  <TopicEditView 
+                    :topic="simulatorTopicData"
+                    @back="logEvent('TopicEdit: Back Clicked', {}); currentComponent = 'header'"
+                    @save="(data) => {
+                      simulatorTopicData.title = data.title;
+                      simulatorTopicData.description = data.description;
+                      simulatorTopicData.image = data.image;
+                      logEvent('TopicEdit: Saved', data);
+                    }"
+                  />
+                </div>
+
+                <!-- TopicConnectionsView Preview -->
+                <div 
+                  v-else-if="currentComponent === 'topic-connections'"
+                  class="w-full flex flex-col"
+                  dir="rtl"
+                >
+                  <TopicConnectionsView 
+                    :topic="simulatorTopicData"
+                    :telegramConnected="simulatorTelegramConnected"
+                    :baleConnected="simulatorBaleConnected"
+                    @back="logEvent('TopicConnections: Back Clicked', {}); currentComponent = 'header'"
+                    @goToConnections="logEvent('TopicConnections: Redirected to Bot connections settings', {}); currentComponent = 'bot-connection'"
+                    @save="(data) => {
+                      simulatorTopicData.autoRepost = data.autoRepost;
+                      simulatorTopicData.selectedChannels = data.selectedChannels;
+                      logEvent('TopicConnections: Saved Settings', data);
+                    }"
                   />
                 </div>
 

@@ -43,11 +43,11 @@ const handleFileChange = (e: Event) => {
 const handleSubmit = () => {
   errorMsg.value = ''
   if (!title.value.trim()) {
-    errorMsg.value = 'لطفا نام گفتگو (تاپیک) را وارد کنید.'
+    errorMsg.value = 'لطفا نام تاپیک را وارد کنید.'
     return
   }
   if (!description.value.trim()) {
-    errorMsg.value = 'لطفا توضیحات گفتگو را وارد کنید.'
+    errorMsg.value = 'لطفا توضیحات تاپیک را وارد کنید.'
     return
   }
 
@@ -92,7 +92,7 @@ const nameLetter = computed(() => {
       >
         <!-- Header -->
         <div class="px-5 py-4 border-b border-border/40 flex items-center justify-between bg-gradient-to-br from-secondary/30 to-secondary/10">
-          <span class="text-xs font-extrabold text-foreground">ایجاد گفتگو (تاپیک) جدید</span>
+          <span class="text-xs font-extrabold text-foreground">ایجاد تاپیک جدید</span>
           <button 
             @click="handleCancel"
             class="size-6.5 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors cursor-pointer"
@@ -111,7 +111,7 @@ const nameLetter = computed(() => {
 
           <!-- Avatar Uploader -->
           <div class="flex flex-col items-center gap-2">
-            <Label class="text-[10px] text-muted-foreground font-semibold align-self-start">تصویر پروفایل گفتگو:</Label>
+            <Label class="text-[10px] text-muted-foreground font-semibold align-self-start">تصویر پروفایل تاپیک:</Label>
             
             <div 
               @click="handleTriggerUpload"
@@ -149,7 +149,7 @@ const nameLetter = computed(() => {
 
           <!-- Fields -->
           <div class="flex flex-col gap-1.5">
-            <Label for="topic-title" class="text-[10.5px] text-muted-foreground font-semibold">نام گفتگو:</Label>
+            <Label for="topic-title" class="text-[10.5px] text-muted-foreground font-semibold">نام تاپیک:</Label>
             <Input 
               id="topic-title" 
               type="text" 
@@ -162,12 +162,12 @@ const nameLetter = computed(() => {
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <Label for="topic-desc" class="text-[10.5px] text-muted-foreground font-semibold">توضیحات گفتگو:</Label>
+            <Label for="topic-desc" class="text-[10.5px] text-muted-foreground font-semibold">توضیحات تاپیک:</Label>
             <Input 
               id="topic-desc" 
               type="text" 
               v-model="description" 
-              placeholder="توضیح کوتاهی درباره این گفتگو بنویسید..." 
+              placeholder="توضیح کوتاهی درباره این تاپیک بنویسید..." 
               class="h-9.5 text-xs font-semibold focus-visible:ring-primary/20"
               maxlength="100"
               @keyup.enter="handleSubmit"
@@ -191,7 +191,7 @@ const nameLetter = computed(() => {
             class="text-xs flex items-center gap-1.5 cursor-pointer"
           >
             <PlusIcon data-icon="inline-start" />
-            ایجاد گفتگو
+            ایجاد تاپیک
           </Button>
         </div>
       </div>
